@@ -71,24 +71,24 @@
 
   <div class="note">Tip: Lower brightness + full screen for cozy sleep mode</div>
 
-  <script>
-    const videos = [
-  "dQw4w9WgXcQ",
-  "5qap5aO4i9A",
-  "jfKfPfyJRdk",
-  "lTRiuFIWV54",
-  "DWcJFNfaw9c",
-  "hHW1oY26kxQ"
+ <script>
+const playlists = [
+  "PL3tRBEVW0hiDa9O6aZ8h6E3bYcV4uWz9S",
+  "PL3tRBEVW0hiB4q3mQ7KpJkL8wYzXc9AbC",
+  "PL3tRBEVW0hiC7LmN0pQ2rStUvWxYz1234"
 ];
-    
-function nextVideo() {
-  const random = videos[Math.floor(Math.random() * videos.length)];
+
+function loadPlaylist() {
+  const random = playlists[Math.floor(Math.random() * playlists.length)];
   document.getElementById("player").src =
-    "https://www.youtube.com/embed/" + random +
-    "?autoplay=1&mute=1&playsinline=1&controls=1";
+    "https://www.youtube.com/embed/videoseries?list=" + random +
+    "&autoplay=1&mute=1&playsinline=1";
 }
 
-nextVideo();
+loadPlaylist();
+</script>
+    
+
    
 
     
