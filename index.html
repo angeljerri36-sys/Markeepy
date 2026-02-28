@@ -80,14 +80,16 @@
   "DWcJFNfaw9c",
   "hHW1oY26kxQ"
 ];
-    ];
+    
+function nextVideo() {
+  const random = videos[Math.floor(Math.random() * videos.length)];
+  document.getElementById("player").src =
+    "https://www.youtube.com/embed/" + random +
+    "?autoplay=1&mute=1&playsinline=1&controls=1";
+}
+   
 
-    function nextVideo() {
-      const random = videos[Math.floor(Math.random() * videos.length)];
-      document.getElementById("player").src =
-  "https://www.youtube-nocookie.com/embed/" + random +
-  "?autoplay=1&mute=1&playsinline=1";
-    }
+    
 
     nextVideo();
   </script>
