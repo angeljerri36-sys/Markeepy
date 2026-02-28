@@ -1,723 +1,288 @@
 <!-- update -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Markeepy — Sleep Mode 🌙</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markeepy – The Keeper Protocol</title>
 
-  <style>
-    :root{
-      --bg1:#0b0b14;
-      --bg2:#120a12;
-      --glow: rgba(255,0,70,0.18);
-      --text:#e9e9ee;
-      --muted: rgba(233,233,238,0.65);
+<style>
+body{
+  margin:0;
+  font-family: Georgia, serif;
+  background: radial-gradient(circle at top,#120000,#000814);
+  color:#e6e6e6;
+  text-align:center;
+  overflow-x:hidden;
+}
 
-      --panel: rgba(20,20,28,0.78);
-      --panelBorder: rgba(255,255,255,0.10);
+h1{
+  margin-top:30px;
+  font-weight:normal;
+  letter-spacing:1px;
+}
 
-      --btnBg: rgba(26,26,36,0.9);
-      --btnBorder: rgba(255,255,255,0.12);
-      --btnHover: rgba(40,40,54,0.95);
+button{
+  padding:10px 18px;
+  margin:8px;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#1a1a24;
+  color:white;
+  cursor:pointer;
+}
 
-      --accent:#ff2b5a;
-      --accentSoft: rgba(255,43,90,0.25);
+button:hover{
+  background:#2a2a3a;
+}
 
-      --shadow: 0 18px 60px rgba(0,0,0,0.55);
-      --radius: 16px;
-    }
+.hidden{
+  display:none;
+}
 
-    * { box-sizing: border-box; }
+.arg-item{
+  cursor:pointer;
+  display:inline-block;
+  margin:8px;
+  font-size:22px;
+  opacity:0.85;
+}
 
-    body{
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:flex-start;
-      padding: 42px 16px 80px;
-      color: var(--text);
-      font-family: Georgia, serif;
-      overflow-x:hidden;
-      background:
-        radial-gradient(circle at 28% 25%, rgba(255,0,80,0.11), transparent 48%),
-        radial-gradient(circle at 75% 70%, rgba(0,0,0,0.65), transparent 58%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      position:relative;
-    }
+#hintBox{
+  margin-top:15px;
+  min-height:40px;
+}
 
-    /* subtle checker overlay */
-    body::after{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:0;
-      background-image:
-        linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%);
-      background-size: 90px 90px;
-      opacity:0.06;
-      mix-blend-mode: overlay;
-    }
+input{
+  padding:8px;
+  border-radius:6px;
+  border:none;
+  margin-top:10px;
+}
 
-    /* floating decor layer */
-    .background-decor{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:1;
-      opacity:0.06; /* soft mode */
-      filter: drop-shadow(0 0 10px rgba(0,0,0,0.65));
-    }
+.grid{
+  display:grid;
+  grid-template-columns: repeat(5, 60px);
+  gap:10px;
+  justify-content:center;
+  margin-top:15px;
+}
 
-    .background-decor span{
-      position:absolute;
-      top:120vh;
-      font-family: Impact, system-ui, sans-serif;
-      font-weight:900;
-      font-size:64px;
-      animation: floatUp 46s linear infinite;
-      user-select:none;
+.tile{
+  width:60px;
+  height:60px;
+  background:#1c1c28;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-      /* checkered fill on the M */
-      background: repeating-linear-gradient(
-        45deg,
-        #000 0px,
-        #000 12px,
-        var(--accent) 12px,
-        var(--accent) 24px
-      );
-      -webkit-background-clip:text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 10px rgba(255,0,70,0.25);
-    }
+.tile.active{
+  background:#8b0000;
+}
 
-    .background-decor span.controller{
-      /* emoji/controller should show normally */
-      background:none;
-      -webkit-text-fill-color: initial;
-      filter: grayscale(100%) brightness(0.7);
-      text-shadow: 0 0 8px rgba(255,0,70,0.18);
-      font-size:56px;
-      font-family: system-ui, sans-serif;
-    }
+.memoryGrid{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin-top:20px;
+}
 
-    @keyframes floatUp{
-      from { transform: translateY(0) rotate(0deg); }
-      to   { transform: translateY(-145vh) rotate(360deg); }
-    }
+.memoryTile{
+  width:70px;
+  height:70px;
+  background:#1b1b2a;
+  border-radius:10px;
+  font-size:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
 
-    h1{
-      z-index:2;
-      margin: 0 0 18px;
-      font-weight: normal;
-      letter-spacing: 1px;
-      text-align:center;
-      opacity:0.92;
-      text-shadow: 0 10px 22px rgba(0,0,0,0.65);
-      line-height:1.05;
-      font-size: clamp(34px, 6vw, 56px);
-    }
-
-    .wrap{
-      z-index:2;
-      width: min(980px, 96vw);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap: 14px;
-    }
-
-    .playerWrap{
-      width:100%;
-      background: var(--panel);
-      border: 1px solid var(--panelBorder);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
-      backdrop-filter: blur(10px);
-    }
-
-    #player{
-      width:100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 12px;
-      overflow:hidden;
-    }
-
-    .btnRow{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content:center;
-      margin-top: 4px;
-    }
-
-    button{
-      appearance:none;
-      border: 1px solid var(--btnBorder);
-      background: var(--btnBg);
-      color: var(--text);
-      padding: 12px 18px;
-      border-radius: 12px;
-      cursor:pointer;
-      letter-spacing: 0.6px;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-    }
-
-    button:hover{
-      background: var(--btnHover);
-      transform: translateY(-1px);
-      border-color: rgba(255,255,255,0.18);
-    }
-
-    button:active{
-      transform: translateY(0px) scale(0.99);
-    }
-
-    .note{
-      z-index:2;
-      text-align:center;
-      font-size: 12px;
-      opacity: 0.6;
-      margin-top: 6px;
-    }
-
-    .games{
-      width: 100%;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-top: 6px;
-    }
-
-    .card{
-      width: 100%;
-      background: rgba(18,18,26,0.62);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.45);
-      backdrop-filter: blur(10px);
-    }
-
-    .cardTitle{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-    }
-
-    .cardTitle h2{
-      margin:0;
-      font-size: 14px;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      opacity:0.9;
-      font-weight: 700;
-    }
-
-    .pill{
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.82);
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-      user-select:none;
-    }
-
-    /* ---------------- ARG Hunt ---------------- */
-    .argStatus{
-      display:flex;
-      flex-direction:column;
-      gap: 8px;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-    }
-
-    .progressBar{
-      width:100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .progressBar > div{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(255,43,90,0.75), rgba(255,43,90,0.18));
-      box-shadow: 0 0 16px rgba(255,43,90,0.35);
-      transition: width .25s ease;
-    }
-
-    .argLog{
-      font-size: 13px;
-      color: rgba(233,233,238,0.75);
-      min-height: 20px;
-      line-height:1.35;
-    }
-
-    .secretBox{
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,43,90,0.25);
-      background: rgba(255,43,90,0.07);
-      display:none;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-      font-size: 13px;
-      line-height:1.4;
-    }
-
-    /* Invisible hotspot areas for ARG */
-    .hotspot{
-      position:fixed;
-      z-index:3;
-      background: transparent;
-      border-radius: 16px;
-      pointer-events:auto;
-      /* dev mode: uncomment to see
-      outline: 1px dashed rgba(255,0,70,0.35);
-      */
-    }
-
-    /* ---------------- Lights Out Puzzle ---------------- */
-    .puzzleWrap{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
-    }
-
-    .puzzleGrid{
-      width: 100%;
-      max-width: 520px;
-      display:grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-      margin: 0 auto;
-    }
-
-    .tile{
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
-      font-weight: 800;
-      font-size: 22px;
-      letter-spacing: 1px;
-      color: rgba(233,233,238,0.78);
-    }
-
-    .tile:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.07);
-    }
-
-    .tile.on{
-      background: rgba(255,43,90,0.17);
-      border-color: rgba(255,43,90,0.28);
-      box-shadow: 0 0 18px rgba(255,43,90,0.18);
-      color: rgba(255,235,242,0.92);
-    }
-
-    .puzzleMsg{
-      text-align:center;
-      min-height: 18px;
-      font-size: 13px;
-      opacity: 0.8;
-    }
-
-    .tiny{
-      font-size: 12px;
-      opacity: 0.65;
-      text-align:center;
-      line-height:1.35;
-    }
-
-    /* mobile spacing */
-    @media (max-width: 520px){
-      .background-decor span{ font-size: 54px; }
-      .background-decor span.controller{ font-size: 48px; }
-      .tile{ font-size: 20px; border-radius: 12px; }
-    }
-  </style>
+.memoryTile.flash{
+  background:#8b0000;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- floating decor -->
-  <div class="background-decor" aria-hidden="true">
-    <span style="left:10%; animation-delay:0s;">M</span>
-    <span class="controller" style="left:22%; animation-delay:7s;">🎮</span>
-    <span style="left:38%; animation-delay:14s;">M</span>
-    <span class="controller" style="left:55%; animation-delay:21s;">🕹️</span>
-    <span style="left:70%; animation-delay:28s;">M</span>
-    <span class="controller" style="left:85%; animation-delay:35s;">🎮</span>
-  </div>
+<h1 id="title">Markeepy – The Keeper Protocol 🌙</h1>
 
-  <h1 id="title">Markeepy — Sleep Mode 🌙</h1>
+<div>
+<button onclick="startARG()">Begin The Keeper Protocol</button>
+<button onclick="startMemory()">Play Static Memory</button>
+</div>
 
-  <div class="wrap">
+<div id="argSection" class="hidden">
+<h2>The Watchers</h2>
 
-    <div class="playerWrap">
-      <div id="player"></div>
+<div>
+<span class="arg-item" onclick="giveHint(1)">🌙</span>
+<span class="arg-item" onclick="giveHint(2)">🎮</span>
+<span class="arg-item" onclick="giveHint(3)">M</span>
+<span class="arg-item" onclick="giveHint(4)">📺</span>
+</div>
 
-      <div class="btnRow">
-        <button onclick="loadPlaylist()">Next Playlist</button>
-        <button onclick="toggleGames()">Show / Hide Games</button>
-        <button onclick="softReset()">Soft Reset</button>
-      </div>
+<div id="hintBox"></div>
 
-      <div class="note">
-        Tip: Lower brightness + full screen for cozy sleep mode<br>
-        (iPhone note: YouTube audio can pause if Low Power Mode is on or if you lock your phone.)
-      </div>
-    </div>
+<div id="cipherBox" class="hidden">
+<p>WKH NHHSHU LV FORVHU WKDQ BRX WKLQN</p>
+<input id="cipherInput" placeholder="Decode it...">
+<button onclick="checkCipher()">Submit</button>
+</div>
 
-    <div id="games" class="games" style="display:block;">
+<div id="gridPuzzle" class="hidden">
+<p>Follow the red.</p>
+<div class="grid" id="grid"></div>
+</div>
 
-      <!-- ARG Hunt -->
-      <div class="card">
-        <div class="cardTitle">
-          <h2>ARG Hunt — “Wake the Keeper”</h2>
-          <span class="pill"><span id="argCount">0</span>/5 found</span>
-        </div>
+<div id="argLore" class="hidden">
+<h3>Transmission Recovered</h3>
+<p>
+He was never asleep.<br>
+The Watcher is not Darkiplier.<br>
+The Keeper is older.<br>
+He remembers everything.<br>
+Unus. Annus. Forgotten.<br>
+He remains.
+</p>
+</div>
+</div>
 
-        <div class="argStatus">
-          <div class="progressBar"><div id="argBar"></div></div>
-          <div class="argLog" id="argLog">Tap around the page. Five sigils are hidden. Some are invisible hotspots.</div>
+<div id="memorySection" class="hidden">
+<h2>Static Memory</h2>
+<p>Remember the sequence.</p>
+<div class="memoryGrid" id="memoryGrid"></div>
+</div>
 
-          <div class="btnRow" style="justify-content:flex-start;">
-            <button onclick="startARG()">Start / Restart Hunt</button>
-            <button onclick="hintARG()">Hint</button>
-          </div>
+<script>
 
-          <div class="secretBox" id="secretBox">
-            <b>✅ Keeper Awakened.</b><br>
-            You found all five sigils. You’re safe tonight.<br>
-            <span style="opacity:.8;">Reward phrase:</span>
-            <span style="color:rgba(255,235,242,0.95); font-weight:700;">“WE KEEP WATCH.”</span>
-          </div>
-        </div>
-      </div>
+function startARG(){
+  document.getElementById("argSection").classList.remove("hidden");
+}
 
-      <!-- Puzzle -->
-      <div class="card">
-        <div class="cardTitle">
-          <h2>Midnight M Puzzle — Lights Out</h2>
-          <span class="pill">Hard</span>
-        </div>
+function giveHint(num){
+  const hints=[
+    "Sleep is not silence.",
+    "Not all players play.",
+    "Count the watchers.",
+    "He watches from static."
+  ];
+  document.getElementById("hintBox").innerText=hints[num-1];
 
-        <div class="puzzleWrap">
-          <div class="puzzleGrid" id="puzzleGrid"></div>
-          <div class="puzzleMsg" id="puzzleMsg">Goal: turn every tile OFF. Tapping toggles neighbors too.</div>
+  if(!window.hintCount) window.hintCount=0;
+  window.hintCount++;
+  if(window.hintCount>=4){
+    document.getElementById("cipherBox").classList.remove("hidden");
+  }
+}
 
-          <div class="btnRow" style="justify-content:flex-start;">
-            <button onclick="newPuzzle()">New Puzzle</button>
-            <button onclick="resetPuzzle()">Reset</button>
-          </div>
+function checkCipher(){
+  const val=document.getElementById("cipherInput").value.toLowerCase();
+  if(val.includes("keeper is closer")){
+    buildGrid();
+  } else {
+    alert("The static rejects your answer.");
+  }
+}
 
-          <div class="tiny">
-            Pro tip: corners matter. Try solving one edge at a time.
-          </div>
-        </div>
-      </div>
+function buildGrid(){
+  document.getElementById("cipherBox").classList.add("hidden");
+  document.getElementById("gridPuzzle").classList.remove("hidden");
 
-    </div>
-  </div>
+  const grid=document.getElementById("grid");
+  grid.innerHTML="";
+  const correct=[2,7,12,17,22];
 
-  <!-- Invisible ARG hotspots (positions are part of the game) -->
-  <div id="hs1" class="hotspot" style="left:6px; top:6px; width:72px; height:72px;"></div>
-  <div id="hs2" class="hotspot" style="right:6px; top:6px; width:72px; height:72px;"></div>
-  <div id="hs3" class="hotspot" style="left:6px; bottom:6px; width:90px; height:90px;"></div>
-  <div id="hs4" class="hotspot" style="right:6px; bottom:6px; width:90px; height:90px;"></div>
-  <div id="hs5" class="hotspot" style="left:50%; top:52%; width:120px; height:80px; transform:translate(-50%,-50%);"></div>
-
-  <!-- YouTube Iframe API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-
-  <script>
-    // ==========================
-    // ✅ YOUR MARKIPLIER PLAYLIST IDS (from your links)
-    // ==========================
-    const playlists = [
-      "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
-      "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
-      "PL3tRBEVW0hiCaeU-F-6fgexbiyRv7Ppd1",
-      "PL3tRBEVW0hiDZLsN3QOhuOBtraDZ37bFk",
-      "PL3tRBEVW0hiAsvGZJUvoZdoCIUtJXEy2k",
-      "PL3tRBEVW0hiBCAULeDgVBdyKS2mDJGv0T",
-      "PL3tRBEVW0hiDEHzzK4fuL0aDvgMyTXtNt",
-      "PL3tRBEVW0hiCXL96tfdgCYMeGKHh-QjCF",
-      "PL3tRBEVW0hiCgSzYdYjf4HDn4D_COlmSn",
-      "PL3tRBEVW0hiDZIo5a_jS6oLCvQAdLfP1n",
-      "PL3tRBEVW0hiCrrxkKIs7eyJXPJcF7L4-W",
-      "PL3tRBEVW0hiBugUQpVFJrAo27-oXN-RaN",
-      "PL3tRBEVW0hiA1B_nuF9vO6cgl8vjEBgZF",
-      "PL3tRBEVW0hiC_rNAxo81ld_xoTk04akOU",
-      "PL3tRBEVW0hiCUieJRaS6eWfwmxly_lbBv"
-    ];
-
-    let player;
-    let currentPlaylist = playlists[0];
-
-    function pickRandomPlaylist(){
-      return playlists[Math.floor(Math.random() * playlists.length)];
-    }
-
-    // Called by YouTube API
-    function onYouTubeIframeAPIReady(){
-      currentPlaylist = pickRandomPlaylist();
-
-      player = new YT.Player("player", {
-        width: "100%",
-        height: "100%",
-        playerVars: {
-          listType: "playlist",
-          list: currentPlaylist,
-          autoplay: 1,
-          playsinline: 1,
-          controls: 1,
-          rel: 0,
-          modestbranding: 1
-        },
-        events: {
-          onReady: (e) => {
-            // iOS often requires a user gesture; we still try.
-            try { e.target.playVideo(); } catch(_) {}
-          }
+  for(let i=0;i<25;i++){
+    const tile=document.createElement("div");
+    tile.className="tile";
+    tile.innerText="M";
+    tile.onclick=()=>{
+      if(correct.includes(i)){
+        tile.classList.add("active");
+        if(document.querySelectorAll(".active").length===correct.length){
+          document.getElementById("argLore").classList.remove("hidden");
         }
-      });
-    }
-
-    function loadPlaylist(){
-      if(!player) return;
-      currentPlaylist = pickRandomPlaylist();
-      try {
-        player.loadPlaylist({ listType: "playlist", list: currentPlaylist, index: 0 });
-        try { player.playVideo(); } catch(_) {}
-      } catch(_) {}
-    }
-
-    function softReset(){
-      // Soft reset: new playlist + fresh games (without reloading page)
-      loadPlaylist();
-      startARG();
-      newPuzzle();
-    }
-
-    function toggleGames(){
-      const el = document.getElementById("games");
-      el.style.display = (el.style.display === "none") ? "block" : "none";
-    }
-
-    // ==========================
-    // 🕵️ ARG HUNT (tap things)
-    // ==========================
-    const argTargets = [
-      { id: "title",   name:"Moon Sigil", clue:"The moon keeps the door. (Tap the title moon.)", found:false },
-      { id: "hs1",     name:"Northwest Sigil", clue:"Corners remember.", found:false },
-      { id: "hs2",     name:"Northeast Sigil", clue:"Opposite corner, same whisper.", found:false },
-      { id: "hs3",     name:"Southwest Sigil", clue:"Down where sleep begins.", found:false },
-      { id: "hs4",     name:"Southeast Sigil", clue:"The last corner hides the latch.", found:false }
-      // hs5 is an extra decoy hotspot used for misdirection (not required)
-    ];
-
-    const argDecoy = { id:"hs5", hit:false };
-
-    let argStarted = false;
-    let argFound = 0;
-    let argHintIndex = 0;
-
-    function updateARGUI(msg){
-      document.getElementById("argCount").textContent = argFound;
-      document.getElementById("argBar").style.width = (argFound/5*100) + "%";
-      if(msg) document.getElementById("argLog").textContent = msg;
-
-      const secretBox = document.getElementById("secretBox");
-      if(argFound >= 5){
-        secretBox.style.display = "block";
-        document.getElementById("argLog").textContent = "✅ All sigils found. The Keeper is awake.";
       } else {
-        secretBox.style.display = "none";
+        tile.style.opacity=0.4;
       }
+    };
+    grid.appendChild(tile);
+  }
+}
+
+/* MEMORY GAME */
+
+let sequence=[];
+let playerSeq=[];
+let level=0;
+
+function startMemory(){
+  document.getElementById("memorySection").classList.remove("hidden");
+  nextRound();
+}
+
+function nextRound(){
+  playerSeq=[];
+  level++;
+  sequence.push(Math.floor(Math.random()*4));
+  renderMemory();
+  flashSequence();
+}
+
+function renderMemory(){
+  const grid=document.getElementById("memoryGrid");
+  grid.innerHTML="";
+  const symbols=["M","🌙","🎮","⚫"];
+  for(let i=0;i<4;i++){
+    const tile=document.createElement("div");
+    tile.className="memoryTile";
+    tile.innerText=symbols[i];
+    tile.onclick=()=>handleClick(i);
+    grid.appendChild(tile);
+  }
+}
+
+function flashSequence(){
+  const tiles=document.querySelectorAll(".memoryTile");
+  let i=0;
+  const interval=setInterval(()=>{
+    if(i>0) tiles[sequence[i-1]].classList.remove("flash");
+    if(i===sequence.length){
+      clearInterval(interval);
+      return;
     }
+    tiles[sequence[i]].classList.add("flash");
+    i++;
+  },600);
+}
 
-    function startARG(){
-      argStarted = true;
-      argFound = 0;
-      argHintIndex = 0;
-      argTargets.forEach(t => t.found = false);
-      updateARGUI("Hunt started. Five sigils are hidden. Tap around…");
+function handleClick(index){
+  playerSeq.push(index);
+  if(playerSeq[playerSeq.length-1]!==sequence[playerSeq.length-1]){
+    alert("The static consumes your memory.");
+    sequence=[];
+    level=0;
+    return;
+  }
+  if(playerSeq.length===sequence.length){
+    if(level===5){
+      alert("Transmission complete. The Keeper remembers.");
+    } else {
+      nextRound();
     }
+  }
+}
 
-    function hintARG(){
-      if(!argStarted) startARG();
-      // Show the next not-yet-found clue
-      const next = argTargets.find(t => !t.found);
-      if(next){
-        updateARGUI("Hint: " + next.clue);
-      } else {
-        updateARGUI("You already found everything. ✅");
-      }
-    }
+console.log("He is not asleep.");
 
-    function markFound(target){
-      if(!argStarted) startARG();
-      if(target.found) return;
+</script>
 
-      target.found = true;
-      argFound++;
-      updateARGUI("Found: " + target.name + " — " + target.clue);
-
-      // tiny reward: if all found, softly change glow
-      if(argFound >= 5){
-        document.documentElement.style.setProperty("--glow", "rgba(255,0,70,0.28)");
-      }
-    }
-
-    // Attach click handlers
-    function bindARGClicks(){
-      // Title (moon)
-      document.getElementById("title").addEventListener("click", () => {
-        const t = argTargets.find(x => x.id === "title");
-        markFound(t);
-      });
-
-      // Invisible hotspots
-      ["hs1","hs2","hs3","hs4"].forEach(hs => {
-        document.getElementById(hs).addEventListener("click", () => {
-          const t = argTargets.find(x => x.id === hs);
-          markFound(t);
-        });
-      });
-
-      // Decoy hotspot: gives a weird message (ARG flavor)
-      document.getElementById("hs5").addEventListener("click", () => {
-        if(!argStarted) startARG();
-        if(argDecoy.hit) return;
-        argDecoy.hit = true;
-        updateARGUI("…wrong door. But you’re close. Listen for corners.");
-      });
-    }
-
-    // Start ARG by default (optional)
-    // startARG();
-
-    // ==========================
-    // 🧩 LIGHTS OUT PUZZLE (5x5)
-    // ==========================
-    const SIZE = 5;
-    let puzzle = [];      // current state (true = ON)
-    let puzzleStart = []; // snapshot for reset
-
-    function idx(r,c){ return r*SIZE + c; }
-
-    function renderPuzzle(){
-      const grid = document.getElementById("puzzleGrid");
-      grid.innerHTML = "";
-
-      for(let r=0; r<SIZE; r++){
-        for(let c=0; c<SIZE; c++){
-          const i = idx(r,c);
-          const btn = document.createElement("div");
-          btn.className = "tile" + (puzzle[i] ? " on" : "");
-          btn.textContent = "M";
-          btn.addEventListener("click", () => press(r,c));
-          grid.appendChild(btn);
-        }
-      }
-    }
-
-    function toggleCell(r,c){
-      if(r<0 || r>=SIZE || c<0 || c>=SIZE) return;
-      const i = idx(r,c);
-      puzzle[i] = !puzzle[i];
-    }
-
-    function press(r,c){
-      // toggle self + neighbors
-      toggleCell(r,c);
-      toggleCell(r-1,c);
-      toggleCell(r+1,c);
-      toggleCell(r,c-1);
-      toggleCell(r,c+1);
-
-      renderPuzzle();
-      checkWin();
-    }
-
-    function checkWin(){
-      const won = puzzle.every(v => v === false);
-      const msg = document.getElementById("puzzleMsg");
-      if(won){
-        msg.textContent = "✅ Solved. Sleep well, Keeper.";
-      } else {
-        msg.textContent = "Goal: turn every tile OFF. Tapping toggles neighbors too.";
-      }
-    }
-
-    function randomizePuzzle(moves=18){
-      // start all OFF
-      puzzle = Array(SIZE*SIZE).fill(false);
-
-      // apply random presses to generate a solvable board
-      for(let k=0; k<moves; k++){
-        const r = Math.floor(Math.random()*SIZE);
-        const c = Math.floor(Math.random()*SIZE);
-        // press without rendering each time
-        toggleCell(r,c);
-        toggleCell(r-1,c);
-        toggleCell(r+1,c);
-        toggleCell(r,c-1);
-        toggleCell(r,c+1);
-      }
-
-      // save for reset
-      puzzleStart = puzzle.slice();
-    }
-
-    function newPuzzle(){
-      randomizePuzzle(22); // harder
-      renderPuzzle();
-      checkWin();
-    }
-
-    function resetPuzzle(){
-      puzzle = puzzleStart.slice();
-      renderPuzzle();
-      checkWin();
-    }
-
-    // ==========================
-    // Init
-    // ==========================
-    bindARGClicks();
-    startARG();
-    newPuzzle();
-
-    // tiny easter: press "m" to get a hint for ARG
-    document.addEventListener("keydown", (e) => {
-      if(e.key && e.key.toLowerCase() === "m"){
-        hintARG();
-      }
-    });
-  </script>
 </body>
 </html>
