@@ -1,0 +1,95 @@
+<!-- update -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Markiple – Sleep Mode 🌙</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0b0b12;
+      color: #ddd;
+      font-family: Georgia, serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-weight: normal;
+      opacity: 0.8;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
+    }
+
+    iframe {
+      width: 80vw;
+      height: 45vw;
+      max-width: 900px;
+      max-height: 506px;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 0 60px rgba(255,255,255,0.04);
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 12px 28px;
+      background: #1a1a24;
+      border: 1px solid #2a2a35;
+      color: #aaa;
+      font-size: 14px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #222232;
+      color: #fff;
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 12px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Markiple – Sleep Mode 🌙</h1>
+
+  <iframe id="player" allow="autoplay"></iframe>
+
+  <button onclick="nextVideo()">Next Random Video</button>
+
+  <div class="note">Tip: Lower brightness + full screen for cozy sleep mode</div>
+
+  <script>
+    const videos = [
+      "hYz7H4r3q9Y",
+      "e0nYxXHkq2k",
+      "3BDZVt8m6yY",
+      "xqRZ9kE0j2k",
+      "Z3VJw0kT2mQ",
+      "I9oXxX7dY3k"
+    ];
+
+    function nextVideo() {
+      const random = videos[Math.floor(Math.random() * videos.length)];
+      document.getElementById("player").src =
+        "https://www.youtube.com/embed/" + random +
+        "?autoplay=1&rel=0&modestbranding=1";
+    }
+
+    nextVideo();
+  </script>
+
+</body>
+</html>
