@@ -4,26 +4,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Markeepy – Sleep Mode 🌙</title>
+  <title>Markeepy — The Keeper Protocol 🌙</title>
 
   <style>
     :root{
       --bg1:#07070c;
       --bg2:#0b0b14;
-      --text:#e6e6e6;
+      --text:#e9e9ee;
+      --muted:rgba(233,233,238,0.55);
       --panel:rgba(20,20,28,0.78);
-      --panel-border:rgba(255,255,255,0.08);
+      --panel2:rgba(15,15,22,0.72);
+      --panel-border:rgba(255,255,255,0.09);
       --shadow:0 0 70px rgba(0,0,0,0.55);
-      --btn-bg:#141424;
+
+      --btn-bg:#151526;
       --btn-border:#2a2a35;
-      --btn-hover:#222232;
+      --btn-hover:#232336;
+
       --red:#8b0000;
       --red2:#ff2b2b;
-      --muted:rgba(230,230,230,0.55);
+      --good:#3dff8a;
+      --warn:#ffd24d;
     }
 
-    *{ box-sizing:border-box; }
-
+    *{box-sizing:border-box;}
     body{
       margin:0;
       min-height:100vh;
@@ -31,7 +35,7 @@
       flex-direction:column;
       align-items:center;
       justify-content:flex-start;
-      padding:42px 14px 80px;
+      padding:40px 14px 90px;
       color:var(--text);
       font-family: Georgia, serif;
       overflow-x:hidden;
@@ -42,7 +46,7 @@
       position:relative;
     }
 
-    /* subtle checkered overlay (only once) */
+    /* subtle checkered overlay */
     body::after{
       content:"";
       position:fixed;
@@ -56,21 +60,21 @@
       opacity:0.18;
     }
 
-    /* floating decor layer */
+    /* floating background items */
     .background-decor{
       position:fixed;
       inset:0;
       pointer-events:none;
       z-index:1;
-      opacity:0.05; /* soft sleep mode */
+      opacity:0.06; /* soft mode */
     }
     .background-decor span{
       position:absolute;
       top:110vh;
-      font-size:60px;
+      font-size:58px;
       font-weight:800;
       font-family: Impact, system-ui, sans-serif;
-      animation: floatUp 40s linear infinite;
+      animation: floatUp 44s linear infinite;
       user-select:none;
       background: repeating-linear-gradient(
         45deg,
@@ -91,17 +95,18 @@
     }
     @keyframes floatUp{
       from{ transform:translateY(0); }
-      to{ transform:translateY(-140vh); }
+      to{ transform:translateY(-150vh); }
     }
 
     h1{
       z-index:2;
-      margin:0 0 18px;
+      margin:0 0 12px;
       font-weight:normal;
-      opacity:0.9;
+      opacity:0.92;
       letter-spacing:1px;
       text-shadow:0 0 10px rgba(0,0,0,0.55);
       text-align:center;
+      line-height:1.1;
     }
 
     .wrap{
@@ -113,7 +118,7 @@
       gap:14px;
     }
 
-    #playerWrap{
+    .panel{
       width:100%;
       background:var(--panel);
       border:1px solid var(--panel-border);
@@ -122,11 +127,36 @@
       padding:14px;
     }
 
+    .panelTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .panelTitle h2{
+      margin:0;
+      font-size:16px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      opacity:0.9;
+      font-weight:700;
+    }
+    .pill{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--panel-border);
+      opacity:0.85;
+      white-space:nowrap;
+    }
+
     #player{
       width:100%;
       aspect-ratio:16/9;
       border-radius:12px;
       overflow:hidden;
+      background:rgba(0,0,0,0.25);
     }
 
     .btnRow{
@@ -134,6 +164,7 @@
       gap:10px;
       flex-wrap:wrap;
       justify-content:center;
+      margin-top:12px;
     }
 
     button{
@@ -148,88 +179,51 @@
       transition:0.2s ease;
       box-shadow: 0 10px 25px rgba(0,0,0,0.25);
     }
-    button:hover{
-      background:var(--btn-hover);
-      transform:translateY(-1px);
-    }
+    button:hover{ background:var(--btn-hover); transform:translateY(-1px); }
+    button:disabled{ opacity:0.45; cursor:not-allowed; transform:none; }
 
     .note{
       text-align:center;
       font-size:12px;
       opacity:0.55;
-      margin-top:2px;
+      margin-top:8px;
       line-height:1.35;
     }
 
-    /* Games panel */
-    #gamesPanel{
-      width:100%;
-      display:none;
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr;
       gap:14px;
-      flex-direction:column;
     }
+
     .card{
-      width:100%;
-      background:var(--panel);
+      background:var(--panel2);
       border:1px solid var(--panel-border);
       border-radius:16px;
-      padding:16px;
-      box-shadow:var(--shadow);
-      text-align:left;
+      padding:14px;
     }
-    .card h2{
-      margin:0 0 10px;
+
+    .bigTitle{
       font-size:18px;
       letter-spacing:1px;
       text-transform:uppercase;
-      opacity:0.9;
-    }
-    .card p{
-      margin:8px 0;
-      opacity:0.85;
+      margin:0 0 8px;
+      opacity:0.92;
     }
 
-    .pill{
-      float:right;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--panel-border);
+    .sub{
+      margin:0 0 12px;
       opacity:0.85;
-    }
-
-    /* ARG area */
-    #argStatus{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-top:8px;
-    }
-    #foundBubble{
-      border:1px solid var(--panel-border);
-      border-radius:14px;
-      padding:8px 12px;
-      font-size:13px;
-      opacity:0.9;
-      text-align:center;
-      min-width:110px;
-    }
-    #argMsg{
-      margin-top:10px;
-      font-size:14px;
-      opacity:0.9;
-      min-height:44px;
       line-height:1.35;
     }
 
-    #cipherGate{
-      margin-top:12px;
-      display:none;
+    .inline{
+      display:flex;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
     }
+
     input{
       padding:10px 12px;
       border-radius:12px;
@@ -237,81 +231,68 @@
       background:rgba(0,0,0,0.35);
       color:var(--text);
       outline:none;
-      min-width:220px;
+      min-width:230px;
     }
 
-    #loreDrop{
-      display:none;
-      margin-top:12px;
-      padding-top:12px;
-      border-top:1px solid rgba(255,255,255,0.08);
-      opacity:0.95;
-    }
-    #loreDrop .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    .statusLine{
+      margin-top:10px;
+      min-height:22px;
       font-size:13px;
       opacity:0.9;
-      white-space:pre-wrap;
-      line-height:1.35;
     }
+    .statusLine.good{ color:var(--good); }
+    .statusLine.warn{ color:var(--warn); }
+    .statusLine.bad{ color:var(--red2); }
 
-    /* Lights Out grid */
-    .grid{
+    /* Static Memory (Simon) */
+    .memoryRow{
       display:grid;
-      grid-template-columns: repeat(5, 64px);
+      grid-template-columns: repeat(4, 1fr);
       gap:10px;
-      justify-content:center;
       margin-top:12px;
     }
-    .tile{
-      width:64px;
-      height:64px;
-      border-radius:14px;
+    .memBtn{
+      height:72px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.04);
       display:flex;
       align-items:center;
       justify-content:center;
-      font-family: Impact, system-ui, sans-serif;
-      font-size:24px;
+      font-size:26px;
       cursor:pointer;
       user-select:none;
       transition:0.15s ease;
-      border:1px solid rgba(255,255,255,0.08);
-      background:rgba(255,255,255,0.04);
-      color:rgba(230,230,230,0.70);
+      box-shadow: inset 0 0 0 rgba(0,0,0,0);
     }
-    .tile.on{
+    .memBtn:active{ transform:scale(0.98); }
+    .memBtn.flash{
       background:rgba(139,0,0,0.55);
       border-color:rgba(255,40,40,0.35);
-      color:#fff;
-      text-shadow:0 0 10px rgba(255,0,0,0.25);
-    }
-    .rowBtns{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-start;
-      margin-top:10px;
-    }
-    .small{
-      padding:9px 12px;
-      border-radius:12px;
-      font-size:13px;
+      box-shadow: 0 0 18px rgba(255,0,0,0.18);
     }
 
-    /* Full-screen tap layer for ARG */
-    #tapLayer{
-      position:fixed;
-      inset:0;
-      z-index:3;
-      display:none; /* only while hunting */
-      background:transparent;
+    /* Lore drop */
+    .loreBox{
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,0.08);
     }
-    #tapHintToast{
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:13px;
+      white-space:pre-wrap;
+      line-height:1.35;
+      opacity:0.95;
+    }
+
+    /* Toast */
+    #toast{
       position:fixed;
       left:50%;
       transform:translateX(-50%);
-      bottom:18px;
-      z-index:4;
+      bottom:16px;
+      z-index:10;
       padding:10px 14px;
       border-radius:14px;
       background:rgba(0,0,0,0.55);
@@ -323,111 +304,197 @@
       max-width:min(520px, 92vw);
       text-align:center;
     }
-    #tapHintToast.show{ opacity:1; }
+    #toast.show{ opacity:1; }
   </style>
 </head>
 
 <body>
-
-  <!-- floating decor -->
   <div class="background-decor" aria-hidden="true">
     <span style="left:10%; animation-delay:0s;">M</span>
-    <span class="controller" style="left:22%; animation-delay:7s;">🎮</span>
-    <span style="left:38%; animation-delay:14s;">M</span>
-    <span class="controller" style="left:55%; animation-delay:21s;">🎮</span>
-    <span style="left:70%; animation-delay:28s;">M</span>
-    <span class="controller" style="left:85%; animation-delay:35s;">🎮</span>
+    <span class="controller" style="left:22%; animation-delay:9s;">🎮</span>
+    <span style="left:38%; animation-delay:18s;">M</span>
+    <span class="controller" style="left:55%; animation-delay:27s;">📺</span>
+    <span style="left:70%; animation-delay:36s;">M</span>
+    <span class="controller" style="left:85%; animation-delay:45s;">🎮</span>
   </div>
 
-  <h1>Markeepy – Sleep Mode 🌙</h1>
+  <h1>Markeepy — The Keeper Protocol 🌙</h1>
 
   <div class="wrap">
 
-    <div id="playerWrap">
+    <!-- VIDEO PANEL -->
+    <div class="panel">
+      <div class="panelTitle">
+        <h2>Video Lounge</h2>
+        <div class="pill" id="videoPill">Ready</div>
+      </div>
+
       <div id="player"></div>
 
       <div class="btnRow">
         <button onclick="loadPlaylist()">Next Playlist</button>
-        <button onclick="toggleGames()">Show / Hide Games</button>
+        <button onclick="toggleProtocol()">Begin The Keeper Protocol</button>
         <button onclick="softReset()">Soft Reset</button>
       </div>
 
       <div class="note">
-        Tip: Lower brightness + full screen for cozy sleep mode<br>
-        (iPhone note: YouTube audio can pause if Low Power Mode is on or if you lock your phone.)
+        Tip: Lower brightness + full screen for cozy sleep mode<br/>
+        (iPhone note: YouTube audio may pause if Low Power Mode is on or if you lock your phone.)
       </div>
     </div>
 
-    <div id="gamesPanel">
-
-      <!-- ARG -->
-      <div class="card">
-        <h2>ARG HUNT — “WAKE THE KEEPER” <span class="pill" id="argPill">0/5 found</span></h2>
-
-        <div id="argStatus">
-          <div style="flex:1">
-            <div class="note" style="opacity:0.85; text-align:left;">
-              Hunt started: five sigils are hidden. Tap around anywhere…
-            </div>
-          </div>
-          <div id="foundBubble">0 / 5 found</div>
-        </div>
-
-        <div class="rowBtns">
-          <button class="small" onclick="startHunt()">Start / Restart Hunt</button>
-          <button class="small" onclick="argHint()">Hint</button>
-        </div>
-
-        <div id="argMsg">Tap anywhere on the screen to search. The Keeper doesn’t like direct questions.</div>
-
-        <div id="cipherGate">
-          <div style="width:100%">
-            <div class="note" style="opacity:0.85; text-align:left;">
-              Cipher Gate (Caesar -3): <span style="opacity:0.95;">WKH NHHSHU LV FORVHU WKDQ BRX WKLQN</span>
-            </div>
-          </div>
-          <input id="cipherInput" placeholder="Type the decoded sentence…" />
-          <button class="small" onclick="checkCipher()">Submit</button>
-        </div>
-
-        <div id="loreDrop">
-          <p style="margin:0 0 6px;"><b>Transmission recovered:</b></p>
-          <div class="mono" id="loreText"></div>
-        </div>
+    <!-- ARG / PUZZLES -->
+    <div class="panel" id="protocolPanel" style="display:none;">
+      <div class="panelTitle">
+        <h2>The Watchers</h2>
+        <div class="pill" id="progressPill">Stage 1 / 3</div>
       </div>
 
-      <!-- PUZZLE -->
-      <div class="card">
-        <h2>MIDNIGHT M PUZZLE — LIGHTS OUT <span class="pill">Harder</span></h2>
-        <p class="note" style="opacity:0.85; text-align:left;">
-          Goal: turn every tile OFF. Tapping toggles neighbors too.
-        </p>
+      <div class="grid2">
 
-        <div class="rowBtns">
-          <button class="small" onclick="newPuzzle('easy')">Easy</button>
-          <button class="small" onclick="newPuzzle('normal')">Normal</button>
-          <button class="small" onclick="newPuzzle('hard')">Hard</button>
-          <button class="small" onclick="resetPuzzle()">Reset</button>
+        <!-- STAGE 1: Caesar -->
+        <div class="card" id="stage1Card">
+          <div class="bigTitle">The Watchers</div>
+          <p class="sub">
+            He watches from static. You’re not being chased — you’re being <i>cataloged</i>.<br/>
+            Decode the message (Caesar shift <b>-3</b>). Markiplier lore lives in the shadows: Darkiplier, Warfstache, WKM, Heist, Space…
+          </p>
+
+          <div class="mono" id="cipherText">
+WKH NHHSHU LV FORVHU WKDQ BRX WKLQN
+          </div>
+
+          <div class="inline" style="margin-top:12px;">
+            <input id="cipherInput" placeholder="Decode it…" />
+            <button onclick="checkCipher()">Submit</button>
+            <button onclick="cipherHint()">Hint</button>
+          </div>
+
+          <div class="statusLine" id="cipherStatus"></div>
+
+          <div class="loreBox" id="stage1Lore" style="display:none;">
+            <div class="mono">
+[LOG 01 // WATCHERS]
+The Keeper isn’t a person.
+It’s a pattern you keep returning to.
+You already know the first rule:
+
+Don’t trust the smile.
+            </div>
+          </div>
         </div>
 
-        <div class="grid" id="puzzleGrid"></div>
-        <div class="note" id="puzzleMsg" style="margin-top:10px; opacity:0.75;">Pick a difficulty to start.</div>
-      </div>
+        <!-- STAGE 2: Static Memory -->
+        <div class="card" id="stage2Card" style="display:none;">
+          <div class="bigTitle">Static Memory</div>
+          <p class="sub">
+            Remember the sequence. Four symbols, one signal.
+            This starts easy and ramps. Beat <b>Level 6</b> to unlock the next file.
+          </p>
 
+          <div class="btnRow" style="margin-top:0;">
+            <button onclick="startMemory()">Play Static Memory</button>
+            <button onclick="memoryHint()">Hint</button>
+          </div>
+
+          <div class="memoryRow">
+            <div class="memBtn" data-k="0">🌙</div>
+            <div class="memBtn" data-k="1">🎮</div>
+            <div class="memBtn" data-k="2">M</div>
+            <div class="memBtn" data-k="3">📺</div>
+          </div>
+
+          <div class="statusLine" id="memoryStatus"></div>
+
+          <div class="loreBox" id="stage2Lore" style="display:none;">
+            <div class="mono">
+[LOG 02 // STATIC]
+The signal repeats because you repeat.
+A choice. A timeline. A wink to the camera.
+Heist. Space. A door that was never locked.
+
+You’re getting warmer.
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 3: Lore Lock -->
+        <div class="card" id="stage3Card" style="display:none;">
+          <div class="bigTitle">Keeper Lock</div>
+          <p class="sub">
+            Final gate. Simple but precise.
+            Enter the <b>one word</b> that connects all three:
+            <b>WKM</b>, <b>Heist</b>, <b>Space</b>.
+          </p>
+
+          <div class="inline">
+            <input id="finalInput" placeholder="One word…" />
+            <button onclick="checkFinal()">Submit</button>
+            <button onclick="finalHint()">Hint</button>
+          </div>
+
+          <div class="statusLine" id="finalStatus"></div>
+
+          <div class="loreBox" id="finalLore" style="display:none;">
+            <div class="mono" id="finalLoreText"></div>
+          </div>
+        </div>
+
+      </div>
     </div>
+
   </div>
 
-  <!-- Fullscreen tap layer for ARG hunt -->
-  <div id="tapLayer"></div>
-  <div id="tapHintToast"></div>
+  <div id="toast"></div>
 
   <!-- YouTube Iframe API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
   <script>
     /***********************
-     *  YOUTUBE PLAYLISTS  *
+     *      TOAST          *
      ***********************/
+    let toastTimer;
+    function toast(msg){
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+    }
+
+    /***********************
+     *  SAVE / LOAD STATE  *
+     ***********************/
+    const KEY = "markeepy_state_v1";
+    const defaultState = {
+      stage: 1,
+      cipherSolved: false,
+      memoryBest: 0,
+      memorySolved: false,
+      finalSolved: false
+    };
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        if(!raw) return {...defaultState};
+        return {...defaultState, ...JSON.parse(raw)};
+      }catch(e){
+        return {...defaultState};
+      }
+    }
+    function saveState(){
+      localStorage.setItem(KEY, JSON.stringify(state));
+      renderProgress();
+    }
+
+    let state = loadState();
+
+    /***********************
+     *   YOUTUBE PLAYER    *
+     ***********************/
+    // Your Markiplier playlist IDs
     const playlists = [
       "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
       "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
@@ -455,6 +522,7 @@
 
     function onYouTubeIframeAPIReady(){
       currentPlaylist = pickRandomPlaylist();
+      document.getElementById("videoPill").innerText = "Loading…";
 
       player = new YT.Player("player", {
         width: "100%",
@@ -471,6 +539,7 @@
         events: {
           onReady: (e) => {
             try { e.target.playVideo(); } catch(_) {}
+            document.getElementById("videoPill").innerText = "Playing";
           }
         }
       });
@@ -483,305 +552,323 @@
       toast("Loading a new playlist…");
     }
 
-    function toggleGames(){
-      const panel = document.getElementById("gamesPanel");
-      panel.style.display = (panel.style.display === "flex") ? "none" : "flex";
+    /***********************
+     *   PROTOCOL TOGGLE   *
+     ***********************/
+    function toggleProtocol(){
+      const p = document.getElementById("protocolPanel");
+      const show = p.style.display === "none";
+      p.style.display = show ? "block" : "none";
+      toast(show ? "Keeper Protocol opened." : "Keeper Protocol hidden.");
+      renderProgress();
     }
 
+    function renderProgress(){
+      // Stage visibility
+      const s1 = document.getElementById("stage1Card");
+      const s2 = document.getElementById("stage2Card");
+      const s3 = document.getElementById("stage3Card");
+
+      s1.style.display = "block";
+      s2.style.display = state.cipherSolved ? "block" : "none";
+      s3.style.display = state.memorySolved ? "block" : "none";
+
+      const stageNum = state.finalSolved ? 3 : state.memorySolved ? 3 : state.cipherSolved ? 2 : 1;
+      document.getElementById("progressPill").innerText = `Stage ${stageNum} / 3`;
+
+      // Lore visibility
+      document.getElementById("stage1Lore").style.display = state.cipherSolved ? "block" : "none";
+      document.getElementById("stage2Lore").style.display = state.memorySolved ? "block" : "none";
+      document.getElementById("finalLore").style.display = state.finalSolved ? "block" : "none";
+
+      // Memory best
+      const memLine = document.getElementById("memoryStatus");
+      if(state.cipherSolved){
+        memLine.innerText = `Best Level: ${state.memoryBest} (Beat Level 6 to unlock next file)`;
+        memLine.className = "statusLine";
+      }
+    }
+
+    renderProgress();
+
+    /***********************
+     *   STAGE 1 CIPHER     *
+     ***********************/
+    const cipherAnswer = "the keeper is closer than you think";
+    let cipherHintStep = 0;
+
+    function checkCipher(){
+      const v = (document.getElementById("cipherInput").value || "").trim().toLowerCase();
+      const out = document.getElementById("cipherStatus");
+
+      if(v === cipherAnswer){
+        out.innerText = "Access granted. File opened.";
+        out.className = "statusLine good";
+        state.cipherSolved = true;
+        state.stage = Math.max(state.stage, 2);
+        saveState();
+        toast("Stage 1 solved.");
+      } else {
+        out.innerText = "Not quite. Remember: Caesar shift -3 (letters move back).";
+        out.className = "statusLine bad";
+        toast("Try again.");
+      }
+    }
+
+    function cipherHint(){
+      const out = document.getElementById("cipherStatus");
+      cipherHintStep++;
+
+      if(cipherHintStep === 1){
+        out.innerText = "Hint: W → T, K → H (each letter goes back 3).";
+        out.className = "statusLine warn";
+      } else if(cipherHintStep === 2){
+        out.innerText = "Hint: The first word becomes: THE";
+        out.className = "statusLine warn";
+      } else {
+        out.innerText = "Hint: The full answer is: “the keeper is closer than you think”";
+        out.className = "statusLine warn";
+      }
+      toast("Hint posted.");
+    }
+
+    /***********************
+     *  STAGE 2 MEMORY GAME *
+     ***********************/
+    const memBtns = Array.from(document.querySelectorAll(".memBtn"));
+    let memSeq = [];
+    let memInput = [];
+    let memLevel = 0;
+    let memPlaying = false;
+    let memLocked = false;
+    let memHintUsed = 0;
+
+    memBtns.forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(memLocked || memPlaying || !state.cipherSolved) return;
+        const k = Number(btn.dataset.k);
+        flashBtn(k, 120);
+        memInput.push(k);
+        checkMemProgress();
+      });
+    });
+
+    function flashBtn(k, ms){
+      const b = memBtns[k];
+      b.classList.add("flash");
+      setTimeout(()=>b.classList.remove("flash"), ms);
+    }
+
+    function startMemory(){
+      if(!state.cipherSolved){
+        toast("Solve Stage 1 first.");
+        return;
+      }
+      memSeq = [];
+      memInput = [];
+      memLevel = 0;
+      memHintUsed = 0;
+      nextMemRound();
+      toast("Static Memory started.");
+    }
+
+    function nextMemRound(){
+      memLevel++;
+      memInput = [];
+      // add a new step
+      memSeq.push(Math.floor(Math.random()*4));
+      playSequence();
+      updateMemoryStatus();
+    }
+
+    async function playSequence(){
+      memPlaying = true;
+      memLocked = true;
+      await sleep(350);
+
+      for(const k of memSeq){
+        flashBtn(k, 220);
+        await sleep(340);
+      }
+
+      memPlaying = false;
+      memLocked = false;
+    }
+
+    function checkMemProgress(){
+      // compare input so far
+      for(let i=0;i<memInput.length;i++){
+        if(memInput[i] !== memSeq[i]){
+          failMemory();
+          return;
+        }
+      }
+      // round complete
+      if(memInput.length === memSeq.length){
+        // update best
+        state.memoryBest = Math.max(state.memoryBest, memLevel);
+        saveState();
+
+        if(memLevel >= 6){
+          // solved stage 2
+          state.memorySolved = true;
+          state.stage = Math.max(state.stage, 3);
+          saveState();
+          document.getElementById("memoryStatus").innerText =
+            `Level ${memLevel} cleared. File unlocked.`;
+          document.getElementById("memoryStatus").className = "statusLine good";
+          toast("Stage 2 solved.");
+          return;
+        }
+
+        toast("Good. Next signal…");
+        setTimeout(nextMemRound, 550);
+      }
+    }
+
+    function failMemory(){
+      const line = document.getElementById("memoryStatus");
+      line.innerText = `Signal lost at Level ${memLevel}. Tap “Play Static Memory” to restart.`;
+      line.className = "statusLine bad";
+      toast("Wrong sequence.");
+      memLocked = true;
+      memPlaying = false;
+    }
+
+    function memoryHint(){
+      if(!state.cipherSolved){
+        toast("Solve Stage 1 first.");
+        return;
+      }
+      if(memSeq.length === 0){
+        toast("Start the game first.");
+        return;
+      }
+      memHintUsed++;
+      const line = document.getElementById("memoryStatus");
+
+      if(memHintUsed === 1){
+        line.innerText = "Hint: Watch the rhythm. The pause after the last symbol is longer.";
+        line.className = "statusLine warn";
+      } else if(memHintUsed === 2){
+        line.innerText = "Hint: I can replay the current sequence for you.";
+        line.className = "statusLine warn";
+        toast("Replaying…");
+        playSequence();
+      } else {
+        line.innerText = "Hint: The next symbol is the one you always forget. (Replay again.)";
+        line.className = "statusLine warn";
+        toast("Replaying…");
+        playSequence();
+      }
+    }
+
+    function updateMemoryStatus(){
+      const line = document.getElementById("memoryStatus");
+      line.innerText = `Level ${memLevel} • Repeat the sequence. (Best: ${state.memoryBest})`;
+      line.className = "statusLine";
+    }
+
+    function sleep(ms){ return new Promise(res=>setTimeout(res, ms)); }
+
+    /***********************
+     *  STAGE 3 LORE LOCK   *
+     ***********************/
+    // One-word connector for WKM / Heist / Space: "timeline"
+    // (It’s a clean, solvable link: branching timelines/choices.)
+    const finalAnswer = "timeline";
+    let finalHintStep = 0;
+
+    function checkFinal(){
+      if(!state.memorySolved){
+        toast("Solve Stage 2 first.");
+        return;
+      }
+      const v = (document.getElementById("finalInput").value || "").trim().toLowerCase();
+      const out = document.getElementById("finalStatus");
+
+      if(v === finalAnswer){
+        out.innerText = "Keeper Lock opened.";
+        out.className = "statusLine good";
+        state.finalSolved = true;
+        saveState();
+        revealFinalLore();
+        toast("ARG complete (for now).");
+      } else {
+        out.innerText = "Not quite. One word. Think choices, branches, and outcomes.";
+        out.className = "statusLine bad";
+        toast("Try again.");
+      }
+    }
+
+    function finalHint(){
+      const out = document.getElementById("finalStatus");
+      finalHintStep++;
+
+      if(finalHintStep === 1){
+        out.innerText = "Hint: It’s about choices and outcomes.";
+        out.className = "statusLine warn";
+      } else if(finalHintStep === 2){
+        out.innerText = "Hint: You can have multiple of them. Branching.";
+        out.className = "statusLine warn";
+      } else {
+        out.innerText = "Hint: The answer is: timeline";
+        out.className = "statusLine warn";
+      }
+      toast("Hint posted.");
+    }
+
+    function revealFinalLore(){
+      const lore =
+`[KEEPER PROTOCOL // COMPLETE]
+You solved the locks. So you know the rule:
+
+Markiplier stories don’t end.
+They fold.
+
+WKM is a loop.
+Heist is a branch.
+Space is a fracture.
+
+If you want the next file:
+watch the “static” when the screen goes quiet.
+And remember — the Keeper doesn’t chase you.
+
+It waits for you to press play.`;
+
+      document.getElementById("finalLoreText").innerText = lore;
+      document.getElementById("finalLore").style.display = "block";
+    }
+
+    /***********************
+     *     SOFT RESET       *
+     ***********************/
     function softReset(){
-      // resets games, keeps music playing
-      stopHunt(true);
-      resetPuzzle(true);
-      document.getElementById("cipherGate").style.display = "none";
-      document.getElementById("loreDrop").style.display = "none";
+      // keep videos, reset ARG puzzles + memory progress
+      state = {...defaultState};
+      saveState();
+
+      // clear inputs/status
       document.getElementById("cipherInput").value = "";
-      document.getElementById("argMsg").innerText = "Soft reset complete. Tap ‘Start / Restart Hunt’ to begin again.";
+      document.getElementById("finalInput").value = "";
+      document.getElementById("cipherStatus").innerText = "";
+      document.getElementById("finalStatus").innerText = "";
+      document.getElementById("memoryStatus").innerText = "";
+      cipherHintStep = 0;
+      finalHintStep = 0;
+      memSeq = [];
+      memInput = [];
+      memLevel = 0;
+      memPlaying = false;
+      memLocked = false;
+      memHintUsed = 0;
+
+      renderProgress();
       toast("Soft reset complete.");
     }
 
-    /***********************
-     *       TOAST         *
-     ***********************/
-    let toastTimer;
-    function toast(msg){
-      const t = document.getElementById("tapHintToast");
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
-    }
-
-    /***********************
-     *     ARG HUNT        *
-     ***********************/
-    const tapLayer = document.getElementById("tapLayer");
-
-    let huntActive = false;
-    let sigils = []; // {x,y,found}
-    let foundCount = 0;
-    let hintIndex = 0;
-    let cipherUnlocked = false;
-
-    const hintLines = [
-      "Hint: The first sigil is never near the center.",
-      "Hint: Edges remember more than the middle.",
-      "Hint: If you feel ‘close’ but don’t see it—tap again. Slightly.",
-      "Hint: The Keeper hides patterns, not answers.",
-      "Hint: If you found 3… the last 2 are usually far apart."
-    ];
-
-    function startHunt(){
-      // make 5 random hidden points
-      stopHunt(true);
-      huntActive = true;
-      sigils = [];
-      foundCount = 0;
-      hintIndex = 0;
-      cipherUnlocked = false;
-
-      // spawn in % coords, avoiding the very center for “ARG feel”
-      for(let i=0;i<5;i++){
-        let x,y;
-        do{
-          x = Math.random();
-          y = Math.random();
-        } while (Math.abs(x-0.5) < 0.12 && Math.abs(y-0.5) < 0.12);
-        sigils.push({x,y,found:false});
-      }
-
-      updateFoundUI();
-      document.getElementById("cipherGate").style.display = "none";
-      document.getElementById("loreDrop").style.display = "none";
-      document.getElementById("cipherInput").value = "";
-
-      tapLayer.style.display = "block";
-      tapLayer.onclick = (ev) => handleTap(ev);
-
-      document.getElementById("argMsg").innerText =
-        "Hunt started. Tap anywhere. If the air feels ‘wrong’… you’re close.";
-      toast("ARG Hunt started.");
-    }
-
-    function stopHunt(silent=false){
-      huntActive = false;
-      tapLayer.style.display = "none";
-      tapLayer.onclick = null;
-      if(!silent) toast("Hunt stopped.");
-    }
-
-    function argHint(){
-      if(!huntActive){
-        toast("Start the hunt first.");
-        return;
-      }
-      const msg = hintLines[Math.min(hintIndex, hintLines.length-1)];
-      hintIndex++;
-      document.getElementById("argMsg").innerText = msg;
-      toast("Hint updated.");
-    }
-
-    function handleTap(ev){
-      if(!huntActive) return;
-
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const tx = ev.clientX / w;
-      const ty = ev.clientY / h;
-
-      // find nearest unfound sigil
-      let best = {dist: 999, idx: -1};
-      sigils.forEach((s, idx)=>{
-        if(s.found) return;
-        const dx = tx - s.x;
-        const dy = ty - s.y;
-        const d = Math.sqrt(dx*dx + dy*dy);
-        if(d < best.dist) best = {dist: d, idx};
-      });
-
-      if(best.idx === -1){
-        toast("Nothing left to find…");
-        return;
-      }
-
-      // distance tiers (tuned for phone tapping)
-      if(best.dist < 0.035){
-        // FOUND
-        sigils[best.idx].found = true;
-        foundCount++;
-        updateFoundUI();
-
-        toast("Sigil found.");
-        document.getElementById("argMsg").innerText =
-          `You found a sigil. (${foundCount}/5) The static shifts…`;
-
-        if(foundCount >= 5){
-          stopHunt(true);
-          document.getElementById("cipherGate").style.display = "flex";
-          document.getElementById("argMsg").innerText =
-            "All five sigils found. A sentence crawls out of the noise.";
-          toast("Cipher Gate unlocked.");
-        }
-        return;
-      }
-
-      if(best.dist < 0.07){
-        toast("VERY close.");
-        document.getElementById("argMsg").innerText = "The screen feels warm. Tap again.";
-      } else if(best.dist < 0.12){
-        toast("Close.");
-        document.getElementById("argMsg").innerText = "Static gets louder. You’re close.";
-      } else if(best.dist < 0.20){
-        toast("Somewhere nearby.");
-        document.getElementById("argMsg").innerText = "You feel watched. Move a little.";
-      } else {
-        toast("Cold.");
-        document.getElementById("argMsg").innerText = "Nothing here. Try a different area.";
-      }
-    }
-
-    function updateFoundUI(){
-      document.getElementById("foundBubble").innerText = `${foundCount} / 5 found`;
-      document.getElementById("argPill").innerText = `${foundCount}/5 found`;
-    }
-
-    function checkCipher(){
-      const val = (document.getElementById("cipherInput").value || "").trim().toLowerCase();
-
-      // expected: "the keeper is closer than you think"
-      if(val.includes("keeper") && val.includes("closer") && val.includes("think")){
-        cipherUnlocked = true;
-        document.getElementById("cipherGate").style.display = "none";
-        showLore();
-        toast("Access granted.");
-      } else {
-        toast("Wrong.");
-        document.getElementById("argMsg").innerText =
-          "The static rejects your answer. Read it again. It’s simple… and that’s the point.";
-      }
-    }
-
-    function showLore(){
-      const lore =
-`[KEEPER PROTOCOL // RECOVERY LOG]
-This channel is not asleep.
-This is not Darkiplier.
-This is not Warfstache.
-
-The Keeper is the file you forgot to delete.
-The pause between uploads.
-The shadow behind the joke.
-
-If you’re reading this:
-you already tapped the wrong place
-exactly enough times to be right.
-
-Next: find the pattern that doesn’t belong.`;
-
-      document.getElementById("loreText").innerText = lore;
-      document.getElementById("loreDrop").style.display = "block";
-      document.getElementById("argMsg").innerText =
-        "Transmission recovered. The Keeper remains.";
-    }
-
-    /***********************
-     *   LIGHTS OUT PUZZLE *
-     ***********************/
-    const size = 5;
-    let puzzle = [];
-    let puzzleStart = [];
-
-    function buildPuzzleUI(){
-      const grid = document.getElementById("puzzleGrid");
-      grid.innerHTML = "";
-      for(let r=0;r<size;r++){
-        for(let c=0;c<size;c++){
-          const t = document.createElement("div");
-          t.className = "tile";
-          t.innerText = "M";
-          t.onclick = ()=> tapTile(r,c);
-          t.dataset.r = r;
-          t.dataset.c = c;
-          grid.appendChild(t);
-        }
-      }
-    }
-    buildPuzzleUI();
-
-    function newPuzzle(level){
-      // Start solved (all OFF), then apply random moves (guarantees solvable)
-      puzzle = Array.from({length:size}, ()=> Array.from({length:size}, ()=> false));
-      const moves = (level === "easy") ? 8 : (level === "normal") ? 14 : 22;
-
-      for(let i=0;i<moves;i++){
-        const r = Math.floor(Math.random()*size);
-        const c = Math.floor(Math.random()*size);
-        toggleCross(r,c);
-      }
-
-      // Save start state for reset
-      puzzleStart = puzzle.map(row=>row.slice());
-      renderPuzzle();
-      document.getElementById("puzzleMsg").innerText =
-        `Difficulty: ${level.toUpperCase()}. Turn every tile OFF.`;
-    }
-
-    function resetPuzzle(silent=false){
-      if(puzzleStart.length){
-        puzzle = puzzleStart.map(row=>row.slice());
-        renderPuzzle();
-        if(!silent) toast("Puzzle reset.");
-      } else {
-        if(!silent) toast("Pick a difficulty first.");
-      }
-    }
-
-    function tapTile(r,c){
-      if(!puzzle.length) return;
-      toggleCross(r,c);
-      renderPuzzle();
-
-      if(isSolved()){
-        document.getElementById("puzzleMsg").innerText =
-          "Solved. The room goes quiet. Too quiet.";
-        toast("Solved.");
-      }
-    }
-
-    function toggleCross(r,c){
-      const coords = [
-        [r,c],
-        [r-1,c],
-        [r+1,c],
-        [r,c-1],
-        [r,c+1]
-      ];
-      coords.forEach(([rr,cc])=>{
-        if(rr>=0 && rr<size && cc>=0 && cc<size){
-          puzzle[rr][cc] = !puzzle[rr][cc];
-        }
-      });
-    }
-
-    function renderPuzzle(){
-      const tiles = document.querySelectorAll("#puzzleGrid .tile");
-      tiles.forEach(t=>{
-        const r = Number(t.dataset.r);
-        const c = Number(t.dataset.c);
-        const on = puzzle[r][c];
-        t.classList.toggle("on", on);
-      });
-    }
-
-    function isSolved(){
-      for(let r=0;r<size;r++){
-        for(let c=0;c<size;c++){
-          if(puzzle[r][c]) return false;
-        }
-      }
-      return true;
-    }
-
-    console.log("Markeepy: the Keeper is closer than you think.");
+    // little easter console line
+    console.log("Markeepy: he watches from static.");
   </script>
 </body>
 </html>
