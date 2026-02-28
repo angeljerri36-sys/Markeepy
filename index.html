@@ -4,24 +4,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Markeepy – Sleep Mode 🌙</title>
+  <title>Markeepy — Sleep Mode 🌙</title>
 
   <style>
     :root{
-      --bg1:#07070c;
-      --bg2:#0b0b14;
-      --text:#e6e6e6;
-      --panel: rgba(20,20,28,0.72);
-      --panel-border: rgba(255,255,255,0.08);
-      --shadow: 0 0 60px rgba(0,0,0,0.55);
-      --btn-bg:#1a1a24;
-      --btn-border:#2a2a35;
-      --btn-text:#cfcfcf;
-      --btn-hover:#222232;
-      --red:#8b0000;
+      --bg1:#0b0b14;
+      --bg2:#120a12;
+      --glow: rgba(255,0,70,0.18);
+      --text:#e9e9ee;
+      --muted: rgba(233,233,238,0.65);
+
+      --panel: rgba(20,20,28,0.78);
+      --panelBorder: rgba(255,255,255,0.10);
+
+      --btnBg: rgba(26,26,36,0.9);
+      --btnBorder: rgba(255,255,255,0.12);
+      --btnHover: rgba(40,40,54,0.95);
+
+      --accent:#ff2b5a;
+      --accentSoft: rgba(255,43,90,0.25);
+
+      --shadow: 0 18px 60px rgba(0,0,0,0.55);
+      --radius: 16px;
     }
 
-    *{ box-sizing:border-box; }
+    * { box-sizing: border-box; }
 
     body{
       margin:0;
@@ -30,18 +37,18 @@
       flex-direction:column;
       align-items:center;
       justify-content:flex-start;
-      padding:48px 16px 80px;
-      color:var(--text);
+      padding: 42px 16px 80px;
+      color: var(--text);
       font-family: Georgia, serif;
       overflow-x:hidden;
       background:
-        radial-gradient(circle at 25% 25%, rgba(120, 0, 0, 0.12), transparent 45%),
-        radial-gradient(circle at 75% 70%, rgba(0, 0, 0, 0.55), transparent 60%),
+        radial-gradient(circle at 28% 25%, rgba(255,0,80,0.11), transparent 48%),
+        radial-gradient(circle at 75% 70%, rgba(0,0,0,0.65), transparent 58%),
         linear-gradient(180deg, var(--bg1), var(--bg2));
       position:relative;
     }
 
-    /* subtle checker overlay (ONE time only) */
+    /* subtle checker overlay */
     body::after{
       content:"";
       position:fixed;
@@ -49,155 +56,305 @@
       pointer-events:none;
       z-index:0;
       background-image:
-        linear-gradient(45deg, rgba(80,0,0,0.08) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(80,0,0,0.08) 25%, transparent 25%);
-      background-size:80px 80px;
-      opacity:0.18;
+        linear-gradient(45deg, rgba(255,255,255,0.06) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,0.06) 25%, transparent 25%);
+      background-size: 90px 90px;
+      opacity:0.06;
+      mix-blend-mode: overlay;
     }
 
-    /* floating background layer */
+    /* floating decor layer */
     .background-decor{
       position:fixed;
       inset:0;
       pointer-events:none;
       z-index:1;
-      opacity:0.05; /* soft sleep mode */
+      opacity:0.06; /* soft mode */
+      filter: drop-shadow(0 0 10px rgba(0,0,0,0.65));
     }
 
     .background-decor span{
       position:absolute;
-      top:110vh;
-      font-size:60px;
-      font-weight:800;
+      top:120vh;
       font-family: Impact, system-ui, sans-serif;
-      animation: float 40s linear infinite;
+      font-weight:900;
+      font-size:64px;
+      animation: floatUp 46s linear infinite;
       user-select:none;
 
-      /* checkered text fill */
+      /* checkered fill on the M */
       background: repeating-linear-gradient(
         45deg,
         #000 0px,
         #000 12px,
-        var(--red) 12px,
-        var(--red) 24px
+        var(--accent) 12px,
+        var(--accent) 24px
       );
       -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      text-shadow: 0 0 8px rgba(139,0,0,0.35);
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(255,0,70,0.25);
     }
 
-    .controller{
-      filter: grayscale(100%) brightness(0.65);
-      -webkit-text-fill-color: initial; /* for emoji */
+    .background-decor span.controller{
+      /* emoji/controller should show normally */
       background:none;
-      text-shadow: 0 0 6px rgba(139,0,0,0.25);
+      -webkit-text-fill-color: initial;
+      filter: grayscale(100%) brightness(0.7);
+      text-shadow: 0 0 8px rgba(255,0,70,0.18);
+      font-size:56px;
+      font-family: system-ui, sans-serif;
     }
 
-    @keyframes float{
-      from{ transform: translateY(0); }
-      to{ transform: translateY(-130vh); }
+    @keyframes floatUp{
+      from { transform: translateY(0) rotate(0deg); }
+      to   { transform: translateY(-145vh) rotate(360deg); }
     }
 
     h1{
       z-index:2;
-      margin:0 0 18px;
-      font-weight:normal;
-      opacity:0.88;
-      letter-spacing:1px;
+      margin: 0 0 18px;
+      font-weight: normal;
+      letter-spacing: 1px;
       text-align:center;
-      text-shadow: 0 0 10px rgba(0,0,0,0.5);
+      opacity:0.92;
+      text-shadow: 0 10px 22px rgba(0,0,0,0.65);
+      line-height:1.05;
+      font-size: clamp(34px, 6vw, 56px);
     }
 
     .wrap{
       z-index:2;
-      width:min(980px, 92vw);
+      width: min(980px, 96vw);
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:14px;
+      gap: 14px;
     }
 
-    #playerWrap{
+    .playerWrap{
       width:100%;
-      background:var(--panel);
-      border:1px solid var(--panel-border);
-      border-radius:14px;
+      background: var(--panel);
+      border: 1px solid var(--panelBorder);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding:14px;
+      padding: 14px;
+      backdrop-filter: blur(10px);
     }
 
     #player{
       width:100%;
       aspect-ratio: 16 / 9;
-      border-radius:10px;
+      border-radius: 12px;
       overflow:hidden;
     }
 
     .btnRow{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
+      gap: 10px;
+      flex-wrap: wrap;
       justify-content:center;
+      margin-top: 4px;
     }
 
     button{
-      padding:12px 18px;
-      background:var(--btn-bg);
-      border:1px solid var(--btn-border);
-      color:var(--btn-text);
-      border-radius:10px;
-      font-size:14px;
-      letter-spacing:0.6px;
+      appearance:none;
+      border: 1px solid var(--btnBorder);
+      background: var(--btnBg);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 12px;
       cursor:pointer;
-      transition: 0.25s ease;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      letter-spacing: 0.6px;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
     }
+
     button:hover{
-      background:var(--btn-hover);
-      color:#fff;
+      background: var(--btnHover);
       transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    button:active{
+      transform: translateY(0px) scale(0.99);
     }
 
     .note{
-      font-size:12px;
-      opacity:0.55;
-      text-align:center;
-      margin-top:2px;
       z-index:2;
+      text-align:center;
+      font-size: 12px;
+      opacity: 0.6;
+      margin-top: 6px;
     }
 
-    /* mini game area */
-    #miniGame{
-      width:100%;
-      min-height:52px;
+    .games{
+      width: 100%;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .card{
+      width: 100%;
+      background: rgba(18,18,26,0.62);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.45);
+      backdrop-filter: blur(10px);
+    }
+
+    .cardTitle{
       display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:8px;
-      padding:10px 4px 0;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
     }
 
-    .mTile{
-      font-family: Impact, system-ui, sans-serif;
-      font-size:22px;
-      padding:6px 10px;
-      border-radius:10px;
+    .cardTitle h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      opacity:0.9;
+      font-weight: 700;
+    }
+
+    .pill{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.82);
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      user-select:none;
+    }
+
+    /* ---------------- ARG Hunt ---------------- */
+    .argStatus{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    .progressBar{
+      width:100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .progressBar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(255,43,90,0.75), rgba(255,43,90,0.18));
+      box-shadow: 0 0 16px rgba(255,43,90,0.35);
+      transition: width .25s ease;
+    }
+
+    .argLog{
+      font-size: 13px;
+      color: rgba(233,233,238,0.75);
+      min-height: 20px;
+      line-height:1.35;
+    }
+
+    .secretBox{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,43,90,0.25);
+      background: rgba(255,43,90,0.07);
+      display:none;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      font-size: 13px;
+      line-height:1.4;
+    }
+
+    /* Invisible hotspot areas for ARG */
+    .hotspot{
+      position:fixed;
+      z-index:3;
+      background: transparent;
+      border-radius: 16px;
+      pointer-events:auto;
+      /* dev mode: uncomment to see
+      outline: 1px dashed rgba(255,0,70,0.35);
+      */
+    }
+
+    /* ---------------- Lights Out Puzzle ---------------- */
+    .puzzleWrap{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    .puzzleGrid{
+      width: 100%;
+      max-width: 520px;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 0 auto;
+    }
+
+    .tile{
+      aspect-ratio: 1 / 1;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      display:flex;
+      align-items:center;
+      justify-content:center;
       cursor:pointer;
       user-select:none;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: 0.15s ease;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: 1px;
+      color: rgba(233,233,238,0.78);
     }
-    .mTile:hover{
+
+    .tile:hover{
       transform: translateY(-1px);
       background: rgba(255,255,255,0.07);
     }
 
-    .winMsg{
-      width:100%;
+    .tile.on{
+      background: rgba(255,43,90,0.17);
+      border-color: rgba(255,43,90,0.28);
+      box-shadow: 0 0 18px rgba(255,43,90,0.18);
+      color: rgba(255,235,242,0.92);
+    }
+
+    .puzzleMsg{
       text-align:center;
-      opacity:0.9;
-      padding-top:6px;
+      min-height: 18px;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    .tiny{
+      font-size: 12px;
+      opacity: 0.65;
+      text-align:center;
+      line-height:1.35;
+    }
+
+    /* mobile spacing */
+    @media (max-width: 520px){
+      .background-decor span{ font-size: 54px; }
+      .background-decor span.controller{ font-size: 48px; }
+      .tile{ font-size: 20px; border-radius: 12px; }
     }
   </style>
 </head>
@@ -209,34 +366,96 @@
     <span style="left:10%; animation-delay:0s;">M</span>
     <span class="controller" style="left:22%; animation-delay:7s;">🎮</span>
     <span style="left:38%; animation-delay:14s;">M</span>
-    <span class="controller" style="left:55%; animation-delay:21s;">🎮</span>
+    <span class="controller" style="left:55%; animation-delay:21s;">🕹️</span>
     <span style="left:70%; animation-delay:28s;">M</span>
     <span class="controller" style="left:85%; animation-delay:35s;">🎮</span>
   </div>
 
-  <h1>Markeepy – Sleep Mode 🌙</h1>
+  <h1 id="title">Markeepy — Sleep Mode 🌙</h1>
 
   <div class="wrap">
-    <div id="playerWrap">
+
+    <div class="playerWrap">
       <div id="player"></div>
+
+      <div class="btnRow">
+        <button onclick="loadPlaylist()">Next Playlist</button>
+        <button onclick="toggleGames()">Show / Hide Games</button>
+        <button onclick="softReset()">Soft Reset</button>
+      </div>
+
+      <div class="note">
+        Tip: Lower brightness + full screen for cozy sleep mode<br>
+        (iPhone note: YouTube audio can pause if Low Power Mode is on or if you lock your phone.)
+      </div>
     </div>
 
-    <div class="btnRow">
-      <button onclick="loadPlaylist()">Next Playlist</button>
-      <button onclick="startFindGame()">Find Darkiplier</button>
+    <div id="games" class="games" style="display:block;">
+
+      <!-- ARG Hunt -->
+      <div class="card">
+        <div class="cardTitle">
+          <h2>ARG Hunt — “Wake the Keeper”</h2>
+          <span class="pill"><span id="argCount">0</span>/5 found</span>
+        </div>
+
+        <div class="argStatus">
+          <div class="progressBar"><div id="argBar"></div></div>
+          <div class="argLog" id="argLog">Tap around the page. Five sigils are hidden. Some are invisible hotspots.</div>
+
+          <div class="btnRow" style="justify-content:flex-start;">
+            <button onclick="startARG()">Start / Restart Hunt</button>
+            <button onclick="hintARG()">Hint</button>
+          </div>
+
+          <div class="secretBox" id="secretBox">
+            <b>✅ Keeper Awakened.</b><br>
+            You found all five sigils. You’re safe tonight.<br>
+            <span style="opacity:.8;">Reward phrase:</span>
+            <span style="color:rgba(255,235,242,0.95); font-weight:700;">“WE KEEP WATCH.”</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Puzzle -->
+      <div class="card">
+        <div class="cardTitle">
+          <h2>Midnight M Puzzle — Lights Out</h2>
+          <span class="pill">Hard</span>
+        </div>
+
+        <div class="puzzleWrap">
+          <div class="puzzleGrid" id="puzzleGrid"></div>
+          <div class="puzzleMsg" id="puzzleMsg">Goal: turn every tile OFF. Tapping toggles neighbors too.</div>
+
+          <div class="btnRow" style="justify-content:flex-start;">
+            <button onclick="newPuzzle()">New Puzzle</button>
+            <button onclick="resetPuzzle()">Reset</button>
+          </div>
+
+          <div class="tiny">
+            Pro tip: corners matter. Try solving one edge at a time.
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <div id="miniGame"></div>
-
-    <div class="note">Tip: Lower brightness + full screen for cozy sleep mode</div>
-    <div class="note" style="opacity:0.35;">(iPhone note: YouTube audio may pause when the phone locks.)</div>
   </div>
+
+  <!-- Invisible ARG hotspots (positions are part of the game) -->
+  <div id="hs1" class="hotspot" style="left:6px; top:6px; width:72px; height:72px;"></div>
+  <div id="hs2" class="hotspot" style="right:6px; top:6px; width:72px; height:72px;"></div>
+  <div id="hs3" class="hotspot" style="left:6px; bottom:6px; width:90px; height:90px;"></div>
+  <div id="hs4" class="hotspot" style="right:6px; bottom:6px; width:90px; height:90px;"></div>
+  <div id="hs5" class="hotspot" style="left:50%; top:52%; width:120px; height:80px; transform:translate(-50%,-50%);"></div>
 
   <!-- YouTube Iframe API -->
   <script src="https://www.youtube.com/iframe_api"></script>
 
   <script>
+    // ==========================
     // ✅ YOUR MARKIPLIER PLAYLIST IDS (from your links)
+    // ==========================
     const playlists = [
       "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
       "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
@@ -262,7 +481,7 @@
       return playlists[Math.floor(Math.random() * playlists.length)];
     }
 
-    // Called by YouTube API when ready
+    // Called by YouTube API
     function onYouTubeIframeAPIReady(){
       currentPlaylist = pickRandomPlaylist();
 
@@ -280,64 +499,225 @@
         },
         events: {
           onReady: (e) => {
-            // try to start
-            try { e.target.playVideo(); } catch (_) {}
+            // iOS often requires a user gesture; we still try.
+            try { e.target.playVideo(); } catch(_) {}
           }
         }
       });
     }
 
     function loadPlaylist(){
-      if (!player) return;
+      if(!player) return;
       currentPlaylist = pickRandomPlaylist();
-      // load playlist and start at the first video
-      player.loadPlaylist({ listType: "playlist", list: currentPlaylist, index: 0 });
-      try { player.playVideo(); } catch (_) {}
+      try {
+        player.loadPlaylist({ listType: "playlist", list: currentPlaylist, index: 0 });
+        try { player.playVideo(); } catch(_) {}
+      } catch(_) {}
     }
 
-    // ---- Mini game: Find Darkiplier ----
-    function startFindGame(){
-      const area = document.getElementById("miniGame");
-      area.innerHTML = "";
+    function softReset(){
+      // Soft reset: new playlist + fresh games (without reloading page)
+      loadPlaylist();
+      startARG();
+      newPuzzle();
+    }
 
-      const total = 30;        // how many tiles
-      const winIndex = Math.floor(Math.random() * total); // one "Darkiplier" M
+    function toggleGames(){
+      const el = document.getElementById("games");
+      el.style.display = (el.style.display === "none") ? "block" : "none";
+    }
 
-      for (let i = 0; i < total; i++){
-        const tile = document.createElement("span");
-        tile.className = "mTile";
-        tile.textContent = "M";
+    // ==========================
+    // 🕵️ ARG HUNT (tap things)
+    // ==========================
+    const argTargets = [
+      { id: "title",   name:"Moon Sigil", clue:"The moon keeps the door. (Tap the title moon.)", found:false },
+      { id: "hs1",     name:"Northwest Sigil", clue:"Corners remember.", found:false },
+      { id: "hs2",     name:"Northeast Sigil", clue:"Opposite corner, same whisper.", found:false },
+      { id: "hs3",     name:"Southwest Sigil", clue:"Down where sleep begins.", found:false },
+      { id: "hs4",     name:"Southeast Sigil", clue:"The last corner hides the latch.", found:false }
+      // hs5 is an extra decoy hotspot used for misdirection (not required)
+    ];
 
-        // Mostly normal, one special
-        const isWinner = (i === winIndex);
+    const argDecoy = { id:"hs5", hit:false };
 
-        // set visual
-        if (isWinner){
-          tile.style.color = "#ff2b2b";
-          tile.style.borderColor = "rgba(255,40,40,0.35)";
-          tile.style.textShadow = "0 0 10px rgba(255,0,0,0.35)";
-        } else {
-          tile.style.color = "rgba(230,230,230,0.75)";
-        }
+    let argStarted = false;
+    let argFound = 0;
+    let argHintIndex = 0;
 
-        tile.onclick = () => {
-          if (isWinner){
-            area.innerHTML = '<div class="winMsg">🖤 You found Darkiplier. Sleep well.</div>';
-          } else {
-            tile.style.opacity = "0.35";
-            tile.style.transform = "scale(0.98)";
-          }
-        };
+    function updateARGUI(msg){
+      document.getElementById("argCount").textContent = argFound;
+      document.getElementById("argBar").style.width = (argFound/5*100) + "%";
+      if(msg) document.getElementById("argLog").textContent = msg;
 
-        area.appendChild(tile);
+      const secretBox = document.getElementById("secretBox");
+      if(argFound >= 5){
+        secretBox.style.display = "block";
+        document.getElementById("argLog").textContent = "✅ All sigils found. The Keeper is awake.";
+      } else {
+        secretBox.style.display = "none";
       }
     }
 
-    // Optional little easter egg: press "m" to reload playlist
+    function startARG(){
+      argStarted = true;
+      argFound = 0;
+      argHintIndex = 0;
+      argTargets.forEach(t => t.found = false);
+      updateARGUI("Hunt started. Five sigils are hidden. Tap around…");
+    }
+
+    function hintARG(){
+      if(!argStarted) startARG();
+      // Show the next not-yet-found clue
+      const next = argTargets.find(t => !t.found);
+      if(next){
+        updateARGUI("Hint: " + next.clue);
+      } else {
+        updateARGUI("You already found everything. ✅");
+      }
+    }
+
+    function markFound(target){
+      if(!argStarted) startARG();
+      if(target.found) return;
+
+      target.found = true;
+      argFound++;
+      updateARGUI("Found: " + target.name + " — " + target.clue);
+
+      // tiny reward: if all found, softly change glow
+      if(argFound >= 5){
+        document.documentElement.style.setProperty("--glow", "rgba(255,0,70,0.28)");
+      }
+    }
+
+    // Attach click handlers
+    function bindARGClicks(){
+      // Title (moon)
+      document.getElementById("title").addEventListener("click", () => {
+        const t = argTargets.find(x => x.id === "title");
+        markFound(t);
+      });
+
+      // Invisible hotspots
+      ["hs1","hs2","hs3","hs4"].forEach(hs => {
+        document.getElementById(hs).addEventListener("click", () => {
+          const t = argTargets.find(x => x.id === hs);
+          markFound(t);
+        });
+      });
+
+      // Decoy hotspot: gives a weird message (ARG flavor)
+      document.getElementById("hs5").addEventListener("click", () => {
+        if(!argStarted) startARG();
+        if(argDecoy.hit) return;
+        argDecoy.hit = true;
+        updateARGUI("…wrong door. But you’re close. Listen for corners.");
+      });
+    }
+
+    // Start ARG by default (optional)
+    // startARG();
+
+    // ==========================
+    // 🧩 LIGHTS OUT PUZZLE (5x5)
+    // ==========================
+    const SIZE = 5;
+    let puzzle = [];      // current state (true = ON)
+    let puzzleStart = []; // snapshot for reset
+
+    function idx(r,c){ return r*SIZE + c; }
+
+    function renderPuzzle(){
+      const grid = document.getElementById("puzzleGrid");
+      grid.innerHTML = "";
+
+      for(let r=0; r<SIZE; r++){
+        for(let c=0; c<SIZE; c++){
+          const i = idx(r,c);
+          const btn = document.createElement("div");
+          btn.className = "tile" + (puzzle[i] ? " on" : "");
+          btn.textContent = "M";
+          btn.addEventListener("click", () => press(r,c));
+          grid.appendChild(btn);
+        }
+      }
+    }
+
+    function toggleCell(r,c){
+      if(r<0 || r>=SIZE || c<0 || c>=SIZE) return;
+      const i = idx(r,c);
+      puzzle[i] = !puzzle[i];
+    }
+
+    function press(r,c){
+      // toggle self + neighbors
+      toggleCell(r,c);
+      toggleCell(r-1,c);
+      toggleCell(r+1,c);
+      toggleCell(r,c-1);
+      toggleCell(r,c+1);
+
+      renderPuzzle();
+      checkWin();
+    }
+
+    function checkWin(){
+      const won = puzzle.every(v => v === false);
+      const msg = document.getElementById("puzzleMsg");
+      if(won){
+        msg.textContent = "✅ Solved. Sleep well, Keeper.";
+      } else {
+        msg.textContent = "Goal: turn every tile OFF. Tapping toggles neighbors too.";
+      }
+    }
+
+    function randomizePuzzle(moves=18){
+      // start all OFF
+      puzzle = Array(SIZE*SIZE).fill(false);
+
+      // apply random presses to generate a solvable board
+      for(let k=0; k<moves; k++){
+        const r = Math.floor(Math.random()*SIZE);
+        const c = Math.floor(Math.random()*SIZE);
+        // press without rendering each time
+        toggleCell(r,c);
+        toggleCell(r-1,c);
+        toggleCell(r+1,c);
+        toggleCell(r,c-1);
+        toggleCell(r,c+1);
+      }
+
+      // save for reset
+      puzzleStart = puzzle.slice();
+    }
+
+    function newPuzzle(){
+      randomizePuzzle(22); // harder
+      renderPuzzle();
+      checkWin();
+    }
+
+    function resetPuzzle(){
+      puzzle = puzzleStart.slice();
+      renderPuzzle();
+      checkWin();
+    }
+
+    // ==========================
+    // Init
+    // ==========================
+    bindARGClicks();
+    startARG();
+    newPuzzle();
+
+    // tiny easter: press "m" to get a hint for ARG
     document.addEventListener("keydown", (e) => {
-      if (e.key.toLowerCase() === "m") loadPlaylist();
+      if(e.key && e.key.toLowerCase() === "m"){
+        hintARG();
+      }
     });
   </script>
-
 </body>
 </html>
