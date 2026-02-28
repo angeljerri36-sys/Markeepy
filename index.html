@@ -65,34 +65,39 @@
 
   <h1>Markiple – Sleep Mode 🌙</h1>
 
-  <iframe id="player" allow="autoplay"></iframe>
-
+<iframe id="player" allow="autoplay" allowfullscreen></iframe>
  <button onclick="loadPlaylist()">Next Playlist</button>
 
   <div class="note">Tip: Lower brightness + full screen for cozy sleep mode</div>
 
 <script>
 const playlists = [
-  "UU7_YxT-KID8kRbqZo7MyscQ"  // Markiplier uploads playlist
+  "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
+  "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
+  "PL3tRBEVW0hiCaeU-F-6fgexbiyRv7Ppd1",
+  "PL3tRBEVW0hiDZLsN3QOhuOBtraDZ37bFk",
+  "PL3tRBEVW0hiAsvGZJUvoZdoCIUtJXEy2k",
+  "PL3tRBEVW0hiBCAULeDgVBdyKS2mDJGv0T",
+  "PL3tRBEVW0hiDEHzzK4fuL0aDvgMyTXtNt",
+  "PL3tRBEVW0hiCXL96tfdgCYMeGKHh-QjCF",
+  "PL3tRBEVW0hiCgSzYdYjf4HDn4D_COlmSn",
+  "PL3tRBEVW0hiDZIo5a_jS6oLCvQAdLfP1n",
+  "PL3tRBEVW0hiCrrxkKIs7eyJXPJcF7L4-W",
+  "PL3tRBEVW0hiBugUQpVFJrAo27-oXN-RaN",
+  "PL3tRBEVW0hiA1B_nuF9vO6cgl8vjEBgZF",
+  "PL3tRBEVW0hiC_rNAxo81ld_xoTk04akOU",
+  "PL3tRBEVW0hiCUieJRaS6eWfwmxly_lbBv"
 ];
 
 function loadPlaylist() {
   const random = playlists[Math.floor(Math.random() * playlists.length)];
   document.getElementById("player").src =
     "https://www.youtube.com/embed/videoseries?list=" + random +
-    "&autoplay=1&mute=1&playsinline=1";
+    "&autoplay=1&mute=1&playsinline=1&controls=1&rel=0";
 }
 
 loadPlaylist();
 </script>
-    
-
-   
-
-    
-
-    nextVideo();
-  </script>
 
 </body>
 </html>
