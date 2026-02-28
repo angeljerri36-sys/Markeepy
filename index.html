@@ -1,105 +1,343 @@
 <!-- update -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Markiple – Sleep Mode 🌙</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markeepy – Sleep Mode 🌙</title>
 
   <style>
-    body {
-      margin: 0;
-      background: #0b0b12;
-      color: #ddd;
+    :root{
+      --bg1:#07070c;
+      --bg2:#0b0b14;
+      --text:#e6e6e6;
+      --panel: rgba(20,20,28,0.72);
+      --panel-border: rgba(255,255,255,0.08);
+      --shadow: 0 0 60px rgba(0,0,0,0.55);
+      --btn-bg:#1a1a24;
+      --btn-border:#2a2a35;
+      --btn-text:#cfcfcf;
+      --btn-hover:#222232;
+      --red:#8b0000;
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      padding:48px 16px 80px;
+      color:var(--text);
       font-family: Georgia, serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(120, 0, 0, 0.12), transparent 45%),
+        radial-gradient(circle at 75% 70%, rgba(0, 0, 0, 0.55), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      position:relative;
     }
 
-    h1 {
-      font-weight: normal;
-      opacity: 0.8;
-      margin-bottom: 25px;
-      letter-spacing: 1px;
+    /* subtle checker overlay (ONE time only) */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background-image:
+        linear-gradient(45deg, rgba(80,0,0,0.08) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(80,0,0,0.08) 25%, transparent 25%);
+      background-size:80px 80px;
+      opacity:0.18;
     }
 
-    iframe {
-      width: 80vw;
-      height: 45vw;
-      max-width: 900px;
-      max-height: 506px;
-      border: none;
-      border-radius: 8px;
-      box-shadow: 0 0 60px rgba(255,255,255,0.04);
+    /* floating background layer */
+    .background-decor{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
+      opacity:0.05; /* soft sleep mode */
     }
 
-    button {
-      margin-top: 30px;
-      padding: 12px 28px;
-      background: #1a1a24;
-      border: 1px solid #2a2a35;
-      color: #aaa;
-      font-size: 14px;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: 0.3s ease;
+    .background-decor span{
+      position:absolute;
+      top:110vh;
+      font-size:60px;
+      font-weight:800;
+      font-family: Impact, system-ui, sans-serif;
+      animation: float 40s linear infinite;
+      user-select:none;
+
+      /* checkered text fill */
+      background: repeating-linear-gradient(
+        45deg,
+        #000 0px,
+        #000 12px,
+        var(--red) 12px,
+        var(--red) 24px
+      );
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow: 0 0 8px rgba(139,0,0,0.35);
     }
 
-    button:hover {
-      background: #222232;
-      color: #fff;
+    .controller{
+      filter: grayscale(100%) brightness(0.65);
+      -webkit-text-fill-color: initial; /* for emoji */
+      background:none;
+      text-shadow: 0 0 6px rgba(139,0,0,0.25);
     }
 
-    .note {
-      margin-top: 15px;
-      font-size: 12px;
-      opacity: 0.5;
+    @keyframes float{
+      from{ transform: translateY(0); }
+      to{ transform: translateY(-130vh); }
+    }
+
+    h1{
+      z-index:2;
+      margin:0 0 18px;
+      font-weight:normal;
+      opacity:0.88;
+      letter-spacing:1px;
+      text-align:center;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .wrap{
+      z-index:2;
+      width:min(980px, 92vw);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+    }
+
+    #playerWrap{
+      width:100%;
+      background:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:14px;
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+
+    #player{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      border-radius:10px;
+      overflow:hidden;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+
+    button{
+      padding:12px 18px;
+      background:var(--btn-bg);
+      border:1px solid var(--btn-border);
+      color:var(--btn-text);
+      border-radius:10px;
+      font-size:14px;
+      letter-spacing:0.6px;
+      cursor:pointer;
+      transition: 0.25s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+    button:hover{
+      background:var(--btn-hover);
+      color:#fff;
+      transform: translateY(-1px);
+    }
+
+    .note{
+      font-size:12px;
+      opacity:0.55;
+      text-align:center;
+      margin-top:2px;
+      z-index:2;
+    }
+
+    /* mini game area */
+    #miniGame{
+      width:100%;
+      min-height:52px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      padding:10px 4px 0;
+    }
+
+    .mTile{
+      font-family: Impact, system-ui, sans-serif;
+      font-size:22px;
+      padding:6px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      user-select:none;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: 0.15s ease;
+    }
+    .mTile:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .winMsg{
+      width:100%;
+      text-align:center;
+      opacity:0.9;
+      padding-top:6px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Markiple – Sleep Mode 🌙</h1>
+  <!-- floating decor -->
+  <div class="background-decor" aria-hidden="true">
+    <span style="left:10%; animation-delay:0s;">M</span>
+    <span class="controller" style="left:22%; animation-delay:7s;">🎮</span>
+    <span style="left:38%; animation-delay:14s;">M</span>
+    <span class="controller" style="left:55%; animation-delay:21s;">🎮</span>
+    <span style="left:70%; animation-delay:28s;">M</span>
+    <span class="controller" style="left:85%; animation-delay:35s;">🎮</span>
+  </div>
 
-<iframe id="player" allow="autoplay" allowfullscreen></iframe>
- <button onclick="loadPlaylist()">Next Playlist</button>
+  <h1>Markeepy – Sleep Mode 🌙</h1>
 
-  <div class="note">Tip: Lower brightness + full screen for cozy sleep mode</div>
+  <div class="wrap">
+    <div id="playerWrap">
+      <div id="player"></div>
+    </div>
 
-<script>
-const playlists = [
-  "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
-  "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
-  "PL3tRBEVW0hiCaeU-F-6fgexbiyRv7Ppd1",
-  "PL3tRBEVW0hiDZLsN3QOhuOBtraDZ37bFk",
-  "PL3tRBEVW0hiAsvGZJUvoZdoCIUtJXEy2k",
-  "PL3tRBEVW0hiBCAULeDgVBdyKS2mDJGv0T",
-  "PL3tRBEVW0hiDEHzzK4fuL0aDvgMyTXtNt",
-  "PL3tRBEVW0hiCXL96tfdgCYMeGKHh-QjCF",
-  "PL3tRBEVW0hiCgSzYdYjf4HDn4D_COlmSn",
-  "PL3tRBEVW0hiDZIo5a_jS6oLCvQAdLfP1n",
-  "PL3tRBEVW0hiCrrxkKIs7eyJXPJcF7L4-W",
-  "PL3tRBEVW0hiBugUQpVFJrAo27-oXN-RaN",
-  "PL3tRBEVW0hiA1B_nuF9vO6cgl8vjEBgZF",
-  "PL3tRBEVW0hiC_rNAxo81ld_xoTk04akOU",
-  "PL3tRBEVW0hiCUieJRaS6eWfwmxly_lbBv"
-];
+    <div class="btnRow">
+      <button onclick="loadPlaylist()">Next Playlist</button>
+      <button onclick="startFindGame()">Find Darkiplier</button>
+    </div>
 
-function loadPlaylist() {
-  const randomPlaylist = playlists[Math.floor(Math.random() * playlists.length)];
-  const randomIndex = Math.floor(Math.random() * 25); // random start position
-  document.getElementById("player").src =
-    "https://www.youtube.com/embed/videoseries?list=" + randomPlaylist +
-    "&index=" + randomIndex +
-    "&autoplay=1&mute=1&playsinline=1&controls=1&rel=0";
-}
+    <div id="miniGame"></div>
 
-loadPlaylist();
-</script>
+    <div class="note">Tip: Lower brightness + full screen for cozy sleep mode</div>
+    <div class="note" style="opacity:0.35;">(iPhone note: YouTube audio may pause when the phone locks.)</div>
+  </div>
+
+  <!-- YouTube Iframe API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    // ✅ YOUR MARKIPLIER PLAYLIST IDS (from your links)
+    const playlists = [
+      "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
+      "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
+      "PL3tRBEVW0hiCaeU-F-6fgexbiyRv7Ppd1",
+      "PL3tRBEVW0hiDZLsN3QOhuOBtraDZ37bFk",
+      "PL3tRBEVW0hiAsvGZJUvoZdoCIUtJXEy2k",
+      "PL3tRBEVW0hiBCAULeDgVBdyKS2mDJGv0T",
+      "PL3tRBEVW0hiDEHzzK4fuL0aDvgMyTXtNt",
+      "PL3tRBEVW0hiCXL96tfdgCYMeGKHh-QjCF",
+      "PL3tRBEVW0hiCgSzYdYjf4HDn4D_COlmSn",
+      "PL3tRBEVW0hiDZIo5a_jS6oLCvQAdLfP1n",
+      "PL3tRBEVW0hiCrrxkKIs7eyJXPJcF7L4-W",
+      "PL3tRBEVW0hiBugUQpVFJrAo27-oXN-RaN",
+      "PL3tRBEVW0hiA1B_nuF9vO6cgl8vjEBgZF",
+      "PL3tRBEVW0hiC_rNAxo81ld_xoTk04akOU",
+      "PL3tRBEVW0hiCUieJRaS6eWfwmxly_lbBv"
+    ];
+
+    let player;
+    let currentPlaylist = playlists[0];
+
+    function pickRandomPlaylist(){
+      return playlists[Math.floor(Math.random() * playlists.length)];
+    }
+
+    // Called by YouTube API when ready
+    function onYouTubeIframeAPIReady(){
+      currentPlaylist = pickRandomPlaylist();
+
+      player = new YT.Player("player", {
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          listType: "playlist",
+          list: currentPlaylist,
+          autoplay: 1,
+          playsinline: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1
+        },
+        events: {
+          onReady: (e) => {
+            // try to start
+            try { e.target.playVideo(); } catch (_) {}
+          }
+        }
+      });
+    }
+
+    function loadPlaylist(){
+      if (!player) return;
+      currentPlaylist = pickRandomPlaylist();
+      // load playlist and start at the first video
+      player.loadPlaylist({ listType: "playlist", list: currentPlaylist, index: 0 });
+      try { player.playVideo(); } catch (_) {}
+    }
+
+    // ---- Mini game: Find Darkiplier ----
+    function startFindGame(){
+      const area = document.getElementById("miniGame");
+      area.innerHTML = "";
+
+      const total = 30;        // how many tiles
+      const winIndex = Math.floor(Math.random() * total); // one "Darkiplier" M
+
+      for (let i = 0; i < total; i++){
+        const tile = document.createElement("span");
+        tile.className = "mTile";
+        tile.textContent = "M";
+
+        // Mostly normal, one special
+        const isWinner = (i === winIndex);
+
+        // set visual
+        if (isWinner){
+          tile.style.color = "#ff2b2b";
+          tile.style.borderColor = "rgba(255,40,40,0.35)";
+          tile.style.textShadow = "0 0 10px rgba(255,0,0,0.35)";
+        } else {
+          tile.style.color = "rgba(230,230,230,0.75)";
+        }
+
+        tile.onclick = () => {
+          if (isWinner){
+            area.innerHTML = '<div class="winMsg">🖤 You found Darkiplier. Sleep well.</div>';
+          } else {
+            tile.style.opacity = "0.35";
+            tile.style.transform = "scale(0.98)";
+          }
+        };
+
+        area.appendChild(tile);
+      }
+    }
+
+    // Optional little easter egg: press "m" to reload playlist
+    document.addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() === "m") loadPlaylist();
+    });
+  </script>
 
 </body>
 </html>
