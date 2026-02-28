@@ -1,288 +1,787 @@
 <!-- update -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Markeepy – The Keeper Protocol</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Markeepy – Sleep Mode 🌙</title>
 
-<style>
-body{
-  margin:0;
-  font-family: Georgia, serif;
-  background: radial-gradient(circle at top,#120000,#000814);
-  color:#e6e6e6;
-  text-align:center;
-  overflow-x:hidden;
-}
+  <style>
+    :root{
+      --bg1:#07070c;
+      --bg2:#0b0b14;
+      --text:#e6e6e6;
+      --panel:rgba(20,20,28,0.78);
+      --panel-border:rgba(255,255,255,0.08);
+      --shadow:0 0 70px rgba(0,0,0,0.55);
+      --btn-bg:#141424;
+      --btn-border:#2a2a35;
+      --btn-hover:#222232;
+      --red:#8b0000;
+      --red2:#ff2b2b;
+      --muted:rgba(230,230,230,0.55);
+    }
 
-h1{
-  margin-top:30px;
-  font-weight:normal;
-  letter-spacing:1px;
-}
+    *{ box-sizing:border-box; }
 
-button{
-  padding:10px 18px;
-  margin:8px;
-  border-radius:10px;
-  border:1px solid #333;
-  background:#1a1a24;
-  color:white;
-  cursor:pointer;
-}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      padding:42px 14px 80px;
+      color:var(--text);
+      font-family: Georgia, serif;
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 25% 20%, rgba(120,0,0,0.12), transparent 45%),
+        radial-gradient(circle at 75% 70%, rgba(0,0,0,0.60), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      position:relative;
+    }
 
-button:hover{
-  background:#2a2a3a;
-}
+    /* subtle checkered overlay (only once) */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background-image:
+        linear-gradient(45deg, rgba(80,0,0,0.08) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(80,0,0,0.08) 25%, transparent 25%);
+      background-size:80px 80px;
+      opacity:0.18;
+    }
 
-.hidden{
-  display:none;
-}
+    /* floating decor layer */
+    .background-decor{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:1;
+      opacity:0.05; /* soft sleep mode */
+    }
+    .background-decor span{
+      position:absolute;
+      top:110vh;
+      font-size:60px;
+      font-weight:800;
+      font-family: Impact, system-ui, sans-serif;
+      animation: floatUp 40s linear infinite;
+      user-select:none;
+      background: repeating-linear-gradient(
+        45deg,
+        #000 0px,
+        #000 12px,
+        var(--red) 12px,
+        var(--red) 24px
+      );
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 0 8px rgba(139,0,0,0.35);
+    }
+    .controller{
+      -webkit-text-fill-color: initial;
+      background:none;
+      filter: grayscale(100%) brightness(0.65);
+      text-shadow:0 0 6px rgba(139,0,0,0.25);
+    }
+    @keyframes floatUp{
+      from{ transform:translateY(0); }
+      to{ transform:translateY(-140vh); }
+    }
 
-.arg-item{
-  cursor:pointer;
-  display:inline-block;
-  margin:8px;
-  font-size:22px;
-  opacity:0.85;
-}
+    h1{
+      z-index:2;
+      margin:0 0 18px;
+      font-weight:normal;
+      opacity:0.9;
+      letter-spacing:1px;
+      text-shadow:0 0 10px rgba(0,0,0,0.55);
+      text-align:center;
+    }
 
-#hintBox{
-  margin-top:15px;
-  min-height:40px;
-}
+    .wrap{
+      z-index:2;
+      width:min(980px, 94vw);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+    }
 
-input{
-  padding:8px;
-  border-radius:6px;
-  border:none;
-  margin-top:10px;
-}
+    #playerWrap{
+      width:100%;
+      background:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns: repeat(5, 60px);
-  gap:10px;
-  justify-content:center;
-  margin-top:15px;
-}
+    #player{
+      width:100%;
+      aspect-ratio:16/9;
+      border-radius:12px;
+      overflow:hidden;
+    }
 
-.tile{
-  width:60px;
-  height:60px;
-  background:#1c1c28;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  cursor:pointer;
-}
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
 
-.tile.active{
-  background:#8b0000;
-}
+    button{
+      padding:12px 18px;
+      background:var(--btn-bg);
+      border:1px solid var(--btn-border);
+      color:var(--text);
+      border-radius:14px;
+      font-size:14px;
+      letter-spacing:0.6px;
+      cursor:pointer;
+      transition:0.2s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+    button:hover{
+      background:var(--btn-hover);
+      transform:translateY(-1px);
+    }
 
-.memoryGrid{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  margin-top:20px;
-}
+    .note{
+      text-align:center;
+      font-size:12px;
+      opacity:0.55;
+      margin-top:2px;
+      line-height:1.35;
+    }
 
-.memoryTile{
-  width:70px;
-  height:70px;
-  background:#1b1b2a;
-  border-radius:10px;
-  font-size:28px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-}
+    /* Games panel */
+    #gamesPanel{
+      width:100%;
+      display:none;
+      gap:14px;
+      flex-direction:column;
+    }
+    .card{
+      width:100%;
+      background:var(--panel);
+      border:1px solid var(--panel-border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      text-align:left;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:18px;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      opacity:0.9;
+    }
+    .card p{
+      margin:8px 0;
+      opacity:0.85;
+    }
 
-.memoryTile.flash{
-  background:#8b0000;
-}
-</style>
+    .pill{
+      float:right;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--panel-border);
+      opacity:0.85;
+    }
+
+    /* ARG area */
+    #argStatus{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:8px;
+    }
+    #foundBubble{
+      border:1px solid var(--panel-border);
+      border-radius:14px;
+      padding:8px 12px;
+      font-size:13px;
+      opacity:0.9;
+      text-align:center;
+      min-width:110px;
+    }
+    #argMsg{
+      margin-top:10px;
+      font-size:14px;
+      opacity:0.9;
+      min-height:44px;
+      line-height:1.35;
+    }
+
+    #cipherGate{
+      margin-top:12px;
+      display:none;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    input{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--panel-border);
+      background:rgba(0,0,0,0.35);
+      color:var(--text);
+      outline:none;
+      min-width:220px;
+    }
+
+    #loreDrop{
+      display:none;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px solid rgba(255,255,255,0.08);
+      opacity:0.95;
+    }
+    #loreDrop .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:13px;
+      opacity:0.9;
+      white-space:pre-wrap;
+      line-height:1.35;
+    }
+
+    /* Lights Out grid */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(5, 64px);
+      gap:10px;
+      justify-content:center;
+      margin-top:12px;
+    }
+    .tile{
+      width:64px;
+      height:64px;
+      border-radius:14px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: Impact, system-ui, sans-serif;
+      font-size:24px;
+      cursor:pointer;
+      user-select:none;
+      transition:0.15s ease;
+      border:1px solid rgba(255,255,255,0.08);
+      background:rgba(255,255,255,0.04);
+      color:rgba(230,230,230,0.70);
+    }
+    .tile.on{
+      background:rgba(139,0,0,0.55);
+      border-color:rgba(255,40,40,0.35);
+      color:#fff;
+      text-shadow:0 0 10px rgba(255,0,0,0.25);
+    }
+    .rowBtns{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+      margin-top:10px;
+    }
+    .small{
+      padding:9px 12px;
+      border-radius:12px;
+      font-size:13px;
+    }
+
+    /* Full-screen tap layer for ARG */
+    #tapLayer{
+      position:fixed;
+      inset:0;
+      z-index:3;
+      display:none; /* only while hunting */
+      background:transparent;
+    }
+    #tapHintToast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      z-index:4;
+      padding:10px 14px;
+      border-radius:14px;
+      background:rgba(0,0,0,0.55);
+      border:1px solid rgba(255,255,255,0.08);
+      font-size:13px;
+      opacity:0;
+      transition:0.2s ease;
+      pointer-events:none;
+      max-width:min(520px, 92vw);
+      text-align:center;
+    }
+    #tapHintToast.show{ opacity:1; }
+  </style>
 </head>
 
 <body>
 
-<h1 id="title">Markeepy – The Keeper Protocol 🌙</h1>
+  <!-- floating decor -->
+  <div class="background-decor" aria-hidden="true">
+    <span style="left:10%; animation-delay:0s;">M</span>
+    <span class="controller" style="left:22%; animation-delay:7s;">🎮</span>
+    <span style="left:38%; animation-delay:14s;">M</span>
+    <span class="controller" style="left:55%; animation-delay:21s;">🎮</span>
+    <span style="left:70%; animation-delay:28s;">M</span>
+    <span class="controller" style="left:85%; animation-delay:35s;">🎮</span>
+  </div>
 
-<div>
-<button onclick="startARG()">Begin The Keeper Protocol</button>
-<button onclick="startMemory()">Play Static Memory</button>
-</div>
+  <h1>Markeepy – Sleep Mode 🌙</h1>
 
-<div id="argSection" class="hidden">
-<h2>The Watchers</h2>
+  <div class="wrap">
 
-<div>
-<span class="arg-item" onclick="giveHint(1)">🌙</span>
-<span class="arg-item" onclick="giveHint(2)">🎮</span>
-<span class="arg-item" onclick="giveHint(3)">M</span>
-<span class="arg-item" onclick="giveHint(4)">📺</span>
-</div>
+    <div id="playerWrap">
+      <div id="player"></div>
 
-<div id="hintBox"></div>
+      <div class="btnRow">
+        <button onclick="loadPlaylist()">Next Playlist</button>
+        <button onclick="toggleGames()">Show / Hide Games</button>
+        <button onclick="softReset()">Soft Reset</button>
+      </div>
 
-<div id="cipherBox" class="hidden">
-<p>WKH NHHSHU LV FORVHU WKDQ BRX WKLQN</p>
-<input id="cipherInput" placeholder="Decode it...">
-<button onclick="checkCipher()">Submit</button>
-</div>
+      <div class="note">
+        Tip: Lower brightness + full screen for cozy sleep mode<br>
+        (iPhone note: YouTube audio can pause if Low Power Mode is on or if you lock your phone.)
+      </div>
+    </div>
 
-<div id="gridPuzzle" class="hidden">
-<p>Follow the red.</p>
-<div class="grid" id="grid"></div>
-</div>
+    <div id="gamesPanel">
 
-<div id="argLore" class="hidden">
-<h3>Transmission Recovered</h3>
-<p>
-He was never asleep.<br>
-The Watcher is not Darkiplier.<br>
-The Keeper is older.<br>
-He remembers everything.<br>
-Unus. Annus. Forgotten.<br>
-He remains.
-</p>
-</div>
-</div>
+      <!-- ARG -->
+      <div class="card">
+        <h2>ARG HUNT — “WAKE THE KEEPER” <span class="pill" id="argPill">0/5 found</span></h2>
 
-<div id="memorySection" class="hidden">
-<h2>Static Memory</h2>
-<p>Remember the sequence.</p>
-<div class="memoryGrid" id="memoryGrid"></div>
-</div>
+        <div id="argStatus">
+          <div style="flex:1">
+            <div class="note" style="opacity:0.85; text-align:left;">
+              Hunt started: five sigils are hidden. Tap around anywhere…
+            </div>
+          </div>
+          <div id="foundBubble">0 / 5 found</div>
+        </div>
 
-<script>
+        <div class="rowBtns">
+          <button class="small" onclick="startHunt()">Start / Restart Hunt</button>
+          <button class="small" onclick="argHint()">Hint</button>
+        </div>
 
-function startARG(){
-  document.getElementById("argSection").classList.remove("hidden");
-}
+        <div id="argMsg">Tap anywhere on the screen to search. The Keeper doesn’t like direct questions.</div>
 
-function giveHint(num){
-  const hints=[
-    "Sleep is not silence.",
-    "Not all players play.",
-    "Count the watchers.",
-    "He watches from static."
-  ];
-  document.getElementById("hintBox").innerText=hints[num-1];
+        <div id="cipherGate">
+          <div style="width:100%">
+            <div class="note" style="opacity:0.85; text-align:left;">
+              Cipher Gate (Caesar -3): <span style="opacity:0.95;">WKH NHHSHU LV FORVHU WKDQ BRX WKLQN</span>
+            </div>
+          </div>
+          <input id="cipherInput" placeholder="Type the decoded sentence…" />
+          <button class="small" onclick="checkCipher()">Submit</button>
+        </div>
 
-  if(!window.hintCount) window.hintCount=0;
-  window.hintCount++;
-  if(window.hintCount>=4){
-    document.getElementById("cipherBox").classList.remove("hidden");
-  }
-}
+        <div id="loreDrop">
+          <p style="margin:0 0 6px;"><b>Transmission recovered:</b></p>
+          <div class="mono" id="loreText"></div>
+        </div>
+      </div>
 
-function checkCipher(){
-  const val=document.getElementById("cipherInput").value.toLowerCase();
-  if(val.includes("keeper is closer")){
-    buildGrid();
-  } else {
-    alert("The static rejects your answer.");
-  }
-}
+      <!-- PUZZLE -->
+      <div class="card">
+        <h2>MIDNIGHT M PUZZLE — LIGHTS OUT <span class="pill">Harder</span></h2>
+        <p class="note" style="opacity:0.85; text-align:left;">
+          Goal: turn every tile OFF. Tapping toggles neighbors too.
+        </p>
 
-function buildGrid(){
-  document.getElementById("cipherBox").classList.add("hidden");
-  document.getElementById("gridPuzzle").classList.remove("hidden");
+        <div class="rowBtns">
+          <button class="small" onclick="newPuzzle('easy')">Easy</button>
+          <button class="small" onclick="newPuzzle('normal')">Normal</button>
+          <button class="small" onclick="newPuzzle('hard')">Hard</button>
+          <button class="small" onclick="resetPuzzle()">Reset</button>
+        </div>
 
-  const grid=document.getElementById("grid");
-  grid.innerHTML="";
-  const correct=[2,7,12,17,22];
+        <div class="grid" id="puzzleGrid"></div>
+        <div class="note" id="puzzleMsg" style="margin-top:10px; opacity:0.75;">Pick a difficulty to start.</div>
+      </div>
 
-  for(let i=0;i<25;i++){
-    const tile=document.createElement("div");
-    tile.className="tile";
-    tile.innerText="M";
-    tile.onclick=()=>{
-      if(correct.includes(i)){
-        tile.classList.add("active");
-        if(document.querySelectorAll(".active").length===correct.length){
-          document.getElementById("argLore").classList.remove("hidden");
+    </div>
+  </div>
+
+  <!-- Fullscreen tap layer for ARG hunt -->
+  <div id="tapLayer"></div>
+  <div id="tapHintToast"></div>
+
+  <!-- YouTube Iframe API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    /***********************
+     *  YOUTUBE PLAYLISTS  *
+     ***********************/
+    const playlists = [
+      "PL3tRBEVW0hiCCBhgnrBv7Tlq3zpFxvSHB",
+      "PL3tRBEVW0hiDN2Y8nhPa25cZNoH5QKUD-",
+      "PL3tRBEVW0hiCaeU-F-6fgexbiyRv7Ppd1",
+      "PL3tRBEVW0hiDZLsN3QOhuOBtraDZ37bFk",
+      "PL3tRBEVW0hiAsvGZJUvoZdoCIUtJXEy2k",
+      "PL3tRBEVW0hiBCAULeDgVBdyKS2mDJGv0T",
+      "PL3tRBEVW0hiDEHzzK4fuL0aDvgMyTXtNt",
+      "PL3tRBEVW0hiCXL96tfdgCYMeGKHh-QjCF",
+      "PL3tRBEVW0hiCgSzYdYjf4HDn4D_COlmSn",
+      "PL3tRBEVW0hiDZIo5a_jS6oLCvQAdLfP1n",
+      "PL3tRBEVW0hiCrrxkKIs7eyJXPJcF7L4-W",
+      "PL3tRBEVW0hiBugUQpVFJrAo27-oXN-RaN",
+      "PL3tRBEVW0hiA1B_nuF9vO6cgl8vjEBgZF",
+      "PL3tRBEVW0hiC_rNAxo81ld_xoTk04akOU",
+      "PL3tRBEVW0hiCUieJRaS6eWfwmxly_lbBv"
+    ];
+
+    let player;
+    let currentPlaylist = playlists[0];
+
+    function pickRandomPlaylist(){
+      return playlists[Math.floor(Math.random() * playlists.length)];
+    }
+
+    function onYouTubeIframeAPIReady(){
+      currentPlaylist = pickRandomPlaylist();
+
+      player = new YT.Player("player", {
+        width: "100%",
+        height: "100%",
+        playerVars: {
+          listType: "playlist",
+          list: currentPlaylist,
+          autoplay: 1,
+          playsinline: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1
+        },
+        events: {
+          onReady: (e) => {
+            try { e.target.playVideo(); } catch(_) {}
+          }
         }
-      } else {
-        tile.style.opacity=0.4;
+      });
+    }
+
+    function loadPlaylist(){
+      if(!player) return;
+      currentPlaylist = pickRandomPlaylist();
+      player.loadPlaylist({ listType:"playlist", list: currentPlaylist, index:0 });
+      toast("Loading a new playlist…");
+    }
+
+    function toggleGames(){
+      const panel = document.getElementById("gamesPanel");
+      panel.style.display = (panel.style.display === "flex") ? "none" : "flex";
+    }
+
+    function softReset(){
+      // resets games, keeps music playing
+      stopHunt(true);
+      resetPuzzle(true);
+      document.getElementById("cipherGate").style.display = "none";
+      document.getElementById("loreDrop").style.display = "none";
+      document.getElementById("cipherInput").value = "";
+      document.getElementById("argMsg").innerText = "Soft reset complete. Tap ‘Start / Restart Hunt’ to begin again.";
+      toast("Soft reset complete.");
+    }
+
+    /***********************
+     *       TOAST         *
+     ***********************/
+    let toastTimer;
+    function toast(msg){
+      const t = document.getElementById("tapHintToast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>t.classList.remove("show"), 1400);
+    }
+
+    /***********************
+     *     ARG HUNT        *
+     ***********************/
+    const tapLayer = document.getElementById("tapLayer");
+
+    let huntActive = false;
+    let sigils = []; // {x,y,found}
+    let foundCount = 0;
+    let hintIndex = 0;
+    let cipherUnlocked = false;
+
+    const hintLines = [
+      "Hint: The first sigil is never near the center.",
+      "Hint: Edges remember more than the middle.",
+      "Hint: If you feel ‘close’ but don’t see it—tap again. Slightly.",
+      "Hint: The Keeper hides patterns, not answers.",
+      "Hint: If you found 3… the last 2 are usually far apart."
+    ];
+
+    function startHunt(){
+      // make 5 random hidden points
+      stopHunt(true);
+      huntActive = true;
+      sigils = [];
+      foundCount = 0;
+      hintIndex = 0;
+      cipherUnlocked = false;
+
+      // spawn in % coords, avoiding the very center for “ARG feel”
+      for(let i=0;i<5;i++){
+        let x,y;
+        do{
+          x = Math.random();
+          y = Math.random();
+        } while (Math.abs(x-0.5) < 0.12 && Math.abs(y-0.5) < 0.12);
+        sigils.push({x,y,found:false});
       }
-    };
-    grid.appendChild(tile);
-  }
-}
 
-/* MEMORY GAME */
+      updateFoundUI();
+      document.getElementById("cipherGate").style.display = "none";
+      document.getElementById("loreDrop").style.display = "none";
+      document.getElementById("cipherInput").value = "";
 
-let sequence=[];
-let playerSeq=[];
-let level=0;
+      tapLayer.style.display = "block";
+      tapLayer.onclick = (ev) => handleTap(ev);
 
-function startMemory(){
-  document.getElementById("memorySection").classList.remove("hidden");
-  nextRound();
-}
-
-function nextRound(){
-  playerSeq=[];
-  level++;
-  sequence.push(Math.floor(Math.random()*4));
-  renderMemory();
-  flashSequence();
-}
-
-function renderMemory(){
-  const grid=document.getElementById("memoryGrid");
-  grid.innerHTML="";
-  const symbols=["M","🌙","🎮","⚫"];
-  for(let i=0;i<4;i++){
-    const tile=document.createElement("div");
-    tile.className="memoryTile";
-    tile.innerText=symbols[i];
-    tile.onclick=()=>handleClick(i);
-    grid.appendChild(tile);
-  }
-}
-
-function flashSequence(){
-  const tiles=document.querySelectorAll(".memoryTile");
-  let i=0;
-  const interval=setInterval(()=>{
-    if(i>0) tiles[sequence[i-1]].classList.remove("flash");
-    if(i===sequence.length){
-      clearInterval(interval);
-      return;
+      document.getElementById("argMsg").innerText =
+        "Hunt started. Tap anywhere. If the air feels ‘wrong’… you’re close.";
+      toast("ARG Hunt started.");
     }
-    tiles[sequence[i]].classList.add("flash");
-    i++;
-  },600);
-}
 
-function handleClick(index){
-  playerSeq.push(index);
-  if(playerSeq[playerSeq.length-1]!==sequence[playerSeq.length-1]){
-    alert("The static consumes your memory.");
-    sequence=[];
-    level=0;
-    return;
-  }
-  if(playerSeq.length===sequence.length){
-    if(level===5){
-      alert("Transmission complete. The Keeper remembers.");
-    } else {
-      nextRound();
+    function stopHunt(silent=false){
+      huntActive = false;
+      tapLayer.style.display = "none";
+      tapLayer.onclick = null;
+      if(!silent) toast("Hunt stopped.");
     }
-  }
-}
 
-console.log("He is not asleep.");
+    function argHint(){
+      if(!huntActive){
+        toast("Start the hunt first.");
+        return;
+      }
+      const msg = hintLines[Math.min(hintIndex, hintLines.length-1)];
+      hintIndex++;
+      document.getElementById("argMsg").innerText = msg;
+      toast("Hint updated.");
+    }
 
-</script>
+    function handleTap(ev){
+      if(!huntActive) return;
 
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const tx = ev.clientX / w;
+      const ty = ev.clientY / h;
+
+      // find nearest unfound sigil
+      let best = {dist: 999, idx: -1};
+      sigils.forEach((s, idx)=>{
+        if(s.found) return;
+        const dx = tx - s.x;
+        const dy = ty - s.y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if(d < best.dist) best = {dist: d, idx};
+      });
+
+      if(best.idx === -1){
+        toast("Nothing left to find…");
+        return;
+      }
+
+      // distance tiers (tuned for phone tapping)
+      if(best.dist < 0.035){
+        // FOUND
+        sigils[best.idx].found = true;
+        foundCount++;
+        updateFoundUI();
+
+        toast("Sigil found.");
+        document.getElementById("argMsg").innerText =
+          `You found a sigil. (${foundCount}/5) The static shifts…`;
+
+        if(foundCount >= 5){
+          stopHunt(true);
+          document.getElementById("cipherGate").style.display = "flex";
+          document.getElementById("argMsg").innerText =
+            "All five sigils found. A sentence crawls out of the noise.";
+          toast("Cipher Gate unlocked.");
+        }
+        return;
+      }
+
+      if(best.dist < 0.07){
+        toast("VERY close.");
+        document.getElementById("argMsg").innerText = "The screen feels warm. Tap again.";
+      } else if(best.dist < 0.12){
+        toast("Close.");
+        document.getElementById("argMsg").innerText = "Static gets louder. You’re close.";
+      } else if(best.dist < 0.20){
+        toast("Somewhere nearby.");
+        document.getElementById("argMsg").innerText = "You feel watched. Move a little.";
+      } else {
+        toast("Cold.");
+        document.getElementById("argMsg").innerText = "Nothing here. Try a different area.";
+      }
+    }
+
+    function updateFoundUI(){
+      document.getElementById("foundBubble").innerText = `${foundCount} / 5 found`;
+      document.getElementById("argPill").innerText = `${foundCount}/5 found`;
+    }
+
+    function checkCipher(){
+      const val = (document.getElementById("cipherInput").value || "").trim().toLowerCase();
+
+      // expected: "the keeper is closer than you think"
+      if(val.includes("keeper") && val.includes("closer") && val.includes("think")){
+        cipherUnlocked = true;
+        document.getElementById("cipherGate").style.display = "none";
+        showLore();
+        toast("Access granted.");
+      } else {
+        toast("Wrong.");
+        document.getElementById("argMsg").innerText =
+          "The static rejects your answer. Read it again. It’s simple… and that’s the point.";
+      }
+    }
+
+    function showLore(){
+      const lore =
+`[KEEPER PROTOCOL // RECOVERY LOG]
+This channel is not asleep.
+This is not Darkiplier.
+This is not Warfstache.
+
+The Keeper is the file you forgot to delete.
+The pause between uploads.
+The shadow behind the joke.
+
+If you’re reading this:
+you already tapped the wrong place
+exactly enough times to be right.
+
+Next: find the pattern that doesn’t belong.`;
+
+      document.getElementById("loreText").innerText = lore;
+      document.getElementById("loreDrop").style.display = "block";
+      document.getElementById("argMsg").innerText =
+        "Transmission recovered. The Keeper remains.";
+    }
+
+    /***********************
+     *   LIGHTS OUT PUZZLE *
+     ***********************/
+    const size = 5;
+    let puzzle = [];
+    let puzzleStart = [];
+
+    function buildPuzzleUI(){
+      const grid = document.getElementById("puzzleGrid");
+      grid.innerHTML = "";
+      for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+          const t = document.createElement("div");
+          t.className = "tile";
+          t.innerText = "M";
+          t.onclick = ()=> tapTile(r,c);
+          t.dataset.r = r;
+          t.dataset.c = c;
+          grid.appendChild(t);
+        }
+      }
+    }
+    buildPuzzleUI();
+
+    function newPuzzle(level){
+      // Start solved (all OFF), then apply random moves (guarantees solvable)
+      puzzle = Array.from({length:size}, ()=> Array.from({length:size}, ()=> false));
+      const moves = (level === "easy") ? 8 : (level === "normal") ? 14 : 22;
+
+      for(let i=0;i<moves;i++){
+        const r = Math.floor(Math.random()*size);
+        const c = Math.floor(Math.random()*size);
+        toggleCross(r,c);
+      }
+
+      // Save start state for reset
+      puzzleStart = puzzle.map(row=>row.slice());
+      renderPuzzle();
+      document.getElementById("puzzleMsg").innerText =
+        `Difficulty: ${level.toUpperCase()}. Turn every tile OFF.`;
+    }
+
+    function resetPuzzle(silent=false){
+      if(puzzleStart.length){
+        puzzle = puzzleStart.map(row=>row.slice());
+        renderPuzzle();
+        if(!silent) toast("Puzzle reset.");
+      } else {
+        if(!silent) toast("Pick a difficulty first.");
+      }
+    }
+
+    function tapTile(r,c){
+      if(!puzzle.length) return;
+      toggleCross(r,c);
+      renderPuzzle();
+
+      if(isSolved()){
+        document.getElementById("puzzleMsg").innerText =
+          "Solved. The room goes quiet. Too quiet.";
+        toast("Solved.");
+      }
+    }
+
+    function toggleCross(r,c){
+      const coords = [
+        [r,c],
+        [r-1,c],
+        [r+1,c],
+        [r,c-1],
+        [r,c+1]
+      ];
+      coords.forEach(([rr,cc])=>{
+        if(rr>=0 && rr<size && cc>=0 && cc<size){
+          puzzle[rr][cc] = !puzzle[rr][cc];
+        }
+      });
+    }
+
+    function renderPuzzle(){
+      const tiles = document.querySelectorAll("#puzzleGrid .tile");
+      tiles.forEach(t=>{
+        const r = Number(t.dataset.r);
+        const c = Number(t.dataset.c);
+        const on = puzzle[r][c];
+        t.classList.toggle("on", on);
+      });
+    }
+
+    function isSolved(){
+      for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+          if(puzzle[r][c]) return false;
+        }
+      }
+      return true;
+    }
+
+    console.log("Markeepy: the Keeper is closer than you think.");
+  </script>
 </body>
 </html>
