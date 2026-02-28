@@ -85,8 +85,8 @@
     function nextVideo() {
       const random = videos[Math.floor(Math.random() * videos.length)];
       document.getElementById("player").src =
-        "https://www.youtube.com/embed/" + random +
-        "?autoplay=1&rel=0&modestbranding=1";
+  "https://www.youtube-nocookie.com/embed/" + random +
+  "?autoplay=1&mute=1&playsinline=1";
     }
 
     nextVideo();
